@@ -1,5 +1,24 @@
 <?php
 $uploadDir = __DIR__ . '/uploads/';
+$storageDays = 30;
+$ttl = $storageDays * 24 * 60 * 60;
+
+// Удаление старых файлов
+foreach (glob($uploadDir . '*') as $file) {
+    if (preg_match('/\.meta$/', $file)) {
+        $base = substr($file, 0, -5);
+        if (!file_exists($base)) {
+            unlink($file);
+            continue;
+        }
+        $created = (int)@file_get_contents($file);
+        if ($created && $created + $ttl < time()) {
+            @unlink($base);
+            @unlink($file);
+        }
+    }
+}
+
 $filename = isset($_GET['f']) ? basename($_GET['f']) : '';
 $filepath = $uploadDir . $filename;
 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -9,6 +28,23 @@ function isImage($ext) {
 }
 function isVideo($ext) {
     return in_array($ext, ['mp4','webm','mov','avi','mkv']);
+}
+
+// Проверка срока хранения
+$metaFile = $uploadDir . $filename . '.meta';
+$expiresIn = '';
+if (file_exists($metaFile)) {
+    $created = (int)file_get_contents($metaFile);
+    $left = $created + $ttl - time();
+    if ($left > 0) {
+        $days = floor($left / 86400);
+        $hours = floor(($left % 86400) / 3600);
+        $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
+    } else {
+        $expiresIn = 'Expired';
+        @unlink($filepath);
+        @unlink($metaFile);
+    }
 }
 
 if (!$filename || !preg_match('/^[a-zA-Z0-9._-]+$/', $filename) || !file_exists($filepath)) {
@@ -87,10 +123,16 @@ if (isImage($ext)) {
                 background: #23272a;
                 box-shadow: 0 2px 16px #0008;
             }
+            .expires {
+                color: #888;
+                font-size: 1.05em;
+                margin: 18px 0 0 0;
+            }
         </style>
     </head>
     <body>
         <img src="uploads/<?= htmlspecialchars($filename) ?>" alt="image"><br>
+        <?php if ($expiresIn): ?><div class="expires">Storage: <?= htmlspecialchars($expiresIn) ?></div><?php endif; ?>
     </body>
     </html>
     <?php
@@ -118,6 +160,11 @@ if (isImage($ext)) {
                 background: #23272a;
                 box-shadow: 0 2px 16px #0008;
             }
+            .expires {
+                color: #888;
+                font-size: 1.05em;
+                margin: 18px 0 0 0;
+            }
         </style>
     </head>
     <body>
@@ -125,6 +172,7 @@ if (isImage($ext)) {
             <source src="uploads/<?= htmlspecialchars($filename) ?>">
             Your browser does not support the video tag.
         </video><br>
+        <?php if ($expiresIn): ?><div class="expires">Storage: <?= htmlspecialchars($expiresIn) ?></div><?php endif; ?>
     </body>
     </html>
     <?php

@@ -4,6 +4,25 @@ $maxFileSize = 100 * 1024 * 1024; // 100 MB
 $uploadDir = __DIR__ . '/uploads/';
 if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
+$storageDays = 30;
+$ttl = $storageDays * 24 * 60 * 60;
+
+// Удаление старых файлов
+foreach (glob($uploadDir . '*') as $file) {
+    if (preg_match('/\.meta$/', $file)) {
+        $base = substr($file, 0, -5);
+        if (!file_exists($base)) {
+            unlink($file);
+            continue;
+        }
+        $created = (int)@file_get_contents($file);
+        if ($created && $created + $ttl < time()) {
+            @unlink($base);
+            @unlink($file);
+        }
+    }
+}
+
 function getExtension($filename) {
     return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 }
@@ -41,6 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             $target = $uploadDir . $uniq;
         } while (file_exists($target));
         if (move_uploaded_file($file['tmp_name'], $target)) {
+            // Сохраняем дату загрузки
+            file_put_contents($uploadDir . $uniq . '.meta', time());
             // История загрузок в сессии
             if (!isset($_SESSION['history'])) $_SESSION['history'] = [];
             array_unshift($_SESSION['history'], [
@@ -338,7 +359,22 @@ if (isset($_GET['clear_history'])) {
             </form>
             <ul style="padding-left:18px; clear:both;">
             <?php foreach ($_SESSION['history'] as $item): ?>
-                <li><a href="<?= $item['link'] ?>" target="_blank"><?= $item['filename'] ?></a></li>
+                <?php
+                $metaFile = $uploadDir . $item['link'] . '.meta';
+                $expiresIn = '';
+                if (file_exists($metaFile)) {
+                    $created = (int)file_get_contents($metaFile);
+                    $left = $created + $ttl - time();
+                    if ($left > 0) {
+                        $days = floor($left / 86400);
+                        $hours = floor(($left % 86400) / 3600);
+                        $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
+                    } else {
+                        $expiresIn = 'Expired';
+                    }
+                }
+                ?>
+                <li><a href="<?= $item['link'] ?>" target="_blank"><?= $item['filename'] ?></a> <span style="color:#888;font-size:0.95em;">(<?= $expiresIn ?>)</span></li>
             <?php endforeach; ?>
             </ul>
         </div>
