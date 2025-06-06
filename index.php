@@ -13,6 +13,14 @@ function isImage($ext) {
 function isVideo($ext) {
     return in_array($ext, ['mp4','webm','mov','avi','mkv']);
 }
+function randomString($length = 5) {
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $str = '';
+    for ($i = 0; $i < $length; $i++) {
+        $str .= $chars[random_int(0, strlen($chars) - 1)];
+    }
+    return $str;
+}
 
 // Обработка загрузки
 $error = '';
@@ -28,8 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
         $error = 'File is too large (max 100 MB).';
     } else {
         $ext = getExtension($file['name']);
-        $uniq = uniqid('', true) . '.' . $ext;
-        $target = $uploadDir . $uniq;
+        do {
+            $uniq = randomString(5) . '.' . $ext;
+            $target = $uploadDir . $uniq;
+        } while (file_exists($target));
         if (move_uploaded_file($file['tmp_name'], $target)) {
             // История загрузок в сессии
             if (!isset($_SESSION['history'])) $_SESSION['history'] = [];
