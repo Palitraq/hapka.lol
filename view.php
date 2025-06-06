@@ -29,6 +29,9 @@ function isImage($ext) {
 function isVideo($ext) {
     return in_array($ext, ['mp4','webm','mov','avi','mkv']);
 }
+function isAudio($ext) {
+    return in_array($ext, ['mp3']);
+}
 
 // Проверка срока хранения
 $metaFile = $uploadDir . $filename . '.meta';
@@ -172,6 +175,43 @@ if (isImage($ext)) {
             <source src="uploads/<?= htmlspecialchars($filename) ?>">
             Your browser does not support the video tag.
         </video><br>
+        <?php if ($expiresIn): ?><div class="expires">Storage: <?= htmlspecialchars($expiresIn) ?></div><?php endif; ?>
+    </body>
+    </html>
+    <?php
+    exit;
+} elseif (isAudio($ext)) {
+    // Просмотр аудио
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Audio</title>
+        <style>
+            body {
+                text-align: center;
+                margin: 40px;
+                font-family: Arial, sans-serif;
+                background: #181a1b;
+            }
+            audio {
+                width: 90vw;
+                max-width: 600px;
+                margin-top: 40px;
+            }
+            .expires {
+                color: #888;
+                font-size: 1.05em;
+                margin: 18px 0 0 0;
+            }
+        </style>
+    </head>
+    <body>
+        <audio controls>
+            <source src="uploads/<?= htmlspecialchars($filename) ?>" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio><br>
         <?php if ($expiresIn): ?><div class="expires">Storage: <?= htmlspecialchars($expiresIn) ?></div><?php endif; ?>
     </body>
     </html>

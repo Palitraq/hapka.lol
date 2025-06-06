@@ -32,6 +32,9 @@ function isImage($ext) {
 function isVideo($ext) {
     return in_array($ext, ['mp4','webm','mov','avi','mkv']);
 }
+function isAudio($ext) {
+    return in_array($ext, ['mp3']);
+}
 function randomString($length = 5) {
     $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $str = '';
@@ -317,6 +320,11 @@ if (isset($_GET['clear_history'])) {
             color: #b9bbbe;
             font-weight: 400;
         }
+        .body-dragover {
+            outline: 3px dashed #5865f2 !important;
+            outline-offset: -8px;
+            background: #202225 !important;
+        }
     </style>
 </head>
 <body>
@@ -454,6 +462,34 @@ window.onclick = function(event) {
     let modal = document.getElementById('support-modal');
     if (event.target === modal) modal.style.display = 'none';
 };
+// Drag & Drop upload
+window.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    document.body.classList.add('body-dragover');
+});
+window.addEventListener('dragleave', function(e) {
+    if (e.target === document.body) {
+        document.body.classList.remove('body-dragover');
+    }
+});
+window.addEventListener('drop', function(e) {
+    e.preventDefault();
+    document.body.classList.remove('body-dragover');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        let label = document.getElementById('fileLabelText');
+        label.textContent = fileInput.files[0].name;
+        preview.innerHTML = '';
+        if (fileInput.files[0].type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '200px';
+            img.src = URL.createObjectURL(fileInput.files[0]);
+            preview.appendChild(img);
+        }
+        setTimeout(() => uploadForm.submit(), 100);
+    }
+});
 </script>
 </body>
 </html> 
