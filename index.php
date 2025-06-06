@@ -183,7 +183,7 @@ if (isset($_GET['clear_history'])) {
             border-radius: 12px;
             border: 1px solid #23272a;
             box-shadow: none;
-            padding: 32px 28px 24px 28px;
+            padding: 18px 28px 24px 28px;
         }
         input[type=file] {
             margin-bottom: 10px;
@@ -236,6 +236,66 @@ if (isset($_GET['clear_history'])) {
         .upload-btn {
             display: none;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #23272a;
+            color: #fff;
+            border-radius: 10px;
+            max-width: 420px;
+            width: 90vw;
+            margin: auto;
+            padding: 32px 28px 24px 28px;
+            box-shadow: 0 2px 16px #000a;
+            position: relative;
+            font-size: 1.05rem;
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px; right: 18px;
+            font-size: 1.7rem;
+            color: #8ab4f8;
+            cursor: pointer;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .modal-close:hover {
+            color: #ff6b6b;
+        }
+        .custom-file-upload {
+            display: inline-block;
+            padding: 10px 22px;
+            background: #23272a;
+            color: #f1f1f1;
+            border: 1px solid #444;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.2s, border 0.2s, color 0.2s;
+            margin-bottom: 10px;
+            user-select: none;
+        }
+        .custom-file-upload:hover {
+            background: #36393f;
+            color: #fff;
+            border: 1px solid #5865f2;
+        }
+        .custom-file-upload input[type="file"] {
+            display: none;
+        }
+        #fileLabelText {
+            margin-left: 8px;
+            color: #b9bbbe;
+            font-weight: 400;
+        }
     </style>
 </head>
 <body>
@@ -245,7 +305,7 @@ if (isset($_GET['clear_history'])) {
             <span class="logo"><a href="https://hapka.lol" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;">hapka.lol</a></span>
         </div>
         <div class="header-right">
-            <a href="#" class="header-link">GitHub</a>
+            <a href="https://github.com/Palitraq/hapka.lol" class="header-link">GitHub</a>
             <span class="nav-dot">&bull;</span>
             <a href="#" class="support-btn">&#10084; Support</a>
         </div>
@@ -257,8 +317,11 @@ if (isset($_GET['clear_history'])) {
     <?php if ($error): ?>
         <div class="error"><?= $error ?></div>
     <?php endif; ?>
-    <form id="uploadForm" method="post" enctype="multipart/form-data" autocomplete="off">
-        <input type="file" id="fileInput" name="file" required><br>
+    <form id="uploadForm" method="post" enctype="multipart/form-data" autocomplete="off" style="margin-top:0;margin-bottom:0;">
+        <label class="custom-file-upload" style="margin-top:0;margin-bottom:10px;">
+            <input type="file" id="fileInput" name="file" required>
+            <span id="fileLabelText">Choose file</span>
+        </label>
     </form>
     <div id="preview"></div>
     <?php if ($link): ?>
@@ -280,6 +343,24 @@ if (isset($_GET['clear_history'])) {
             </ul>
         </div>
     <?php endif; ?>
+</div>
+<div id="support-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="modal-close" id="support-close">&times;</span>
+    <h2>&hearts; Support my life</h2>
+    <div style="margin-bottom: 12px;">
+      <b>Bitcoin:</b><br>
+      <span style="word-break:break-all;">bc1qh6r4ptmh5txv43c50s4wfv8ts5z06453ss3tmc</span>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <b>USDT TRC20:</b><br>
+      <span style="word-break:break-all;">TNDvHcXWUcbjoJGQpEd6J3VygKT7RCHZ4g</span>
+    </div>
+    <div>
+      <b>TON:</b><br>
+      <span style="word-break:break-all;">UQCR0jBsHh8jSKw-hrs2cBehRg0rDdIOeZPOIiMYKoCBtQq9</span>
+    </div>
+  </div>
 </div>
 <script>
 // Paste screenshot support
@@ -308,6 +389,12 @@ document.addEventListener('paste', function (event) {
     }
 });
 fileInput.addEventListener('change', function() {
+    let label = document.getElementById('fileLabelText');
+    if (fileInput.files.length) {
+        label.textContent = fileInput.files[0].name;
+    } else {
+        label.textContent = 'Choose file';
+    }
     preview.innerHTML = '';
     if (fileInput.files.length && fileInput.files[0].type.startsWith('image/')) {
         const img = document.createElement('img');
@@ -320,6 +407,17 @@ fileInput.addEventListener('change', function() {
         setTimeout(() => uploadForm.submit(), 100);
     }
 });
+document.querySelector('.support-btn').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('support-modal').style.display = 'flex';
+};
+document.getElementById('support-close').onclick = function() {
+    document.getElementById('support-modal').style.display = 'none';
+};
+window.onclick = function(event) {
+    let modal = document.getElementById('support-modal');
+    if (event.target === modal) modal.style.display = 'none';
+};
 </script>
 </body>
 </html> 
