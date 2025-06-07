@@ -86,6 +86,24 @@ if (isset($_GET['clear_history'])) {
     header('Location: index.php');
     exit;
 }
+
+// PHP: обработка удаления из истории
+if (isset($_GET['del_history'])) {
+    $i = (int)$_GET['del_history'];
+    if (isset($_SESSION['history'][$i])) {
+        // Удаляем файл и .meta, если передан del_file
+        if (isset($_GET['del_file'])) {
+            $file = basename($_GET['del_file']);
+            $filePath = $uploadDir . $file;
+            $metaPath = $filePath . '.meta';
+            if (file_exists($filePath)) unlink($filePath);
+            if (file_exists($metaPath)) unlink($metaPath);
+        }
+        array_splice($_SESSION['history'], $i, 1);
+    }
+    header('Location: index.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -373,6 +391,115 @@ if (isset($_GET['clear_history'])) {
                 max-width: 98vw !important;
             }
         }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 30px;
+        }
+        .history-card {
+            display: flex;
+            background: #23272a;
+            border: 1.5px solid #36393f;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #0004;
+            padding: 16px 18px;
+            gap: 18px;
+            align-items: center;
+            max-width: 100%;
+        }
+        .history-preview {
+            flex: 0 0 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 64px;
+            width: 64px;
+            background: #181a1b;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .history-thumb {
+            max-width: 64px;
+            max-height: 64px;
+            border-radius: 6px;
+            display: block;
+        }
+        .history-icon {
+            font-size: 2.2rem;
+            opacity: 0.7;
+        }
+        .history-info {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .history-filename {
+            font-weight: 600;
+            font-size: 1.08em;
+            margin-bottom: 4px;
+            color: #fff;
+            word-break: break-all;
+        }
+        .history-link-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .history-link {
+            flex: 1 1 auto;
+            background: #181a1b;
+            color: #8ab4f8;
+            border: none;
+            border-radius: 5px;
+            padding: 4px 8px;
+            font-size: 1em;
+            outline: none;
+            word-break: break-all;
+        }
+        .copy-btn, .del-btn {
+            background: #23272a;
+            color: #8ab4f8;
+            border: 1px solid #36393f;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .copy-btn:hover, .del-btn:hover {
+            background: #5865f2;
+            color: #fff;
+        }
+        .history-meta {
+            color: #b9bbbe;
+            font-size: 0.97em;
+            display: flex;
+            gap: 12px;
+            margin-top: 2px;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 700px) {
+            .history-card {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px 6vw;
+                gap: 10px;
+            }
+            .history-preview {
+                margin: 0 auto 8px auto;
+                width: 56px;
+                height: 56px;
+            }
+            .history-thumb {
+                max-width: 56px;
+                max-height: 56px;
+            }
+            .history-link-row {
+                flex-direction: row;
+                gap: 4px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -390,6 +517,9 @@ if (isset($_GET['clear_history'])) {
     <div class="header-underline"></div>
 </div>
 <div class="container">
+    <div style="text-align:left; margin-bottom:18px;">
+        <a href="#" id="terms-link" style="color:#8ab4f8;text-decoration:underline;font-size:1.05em;">Terms and Privacy Policy</a>
+    </div>
     <h2>Upload file (up to 100 MB)</h2>
     <?php if ($error): ?>
         <div class="error"><?= $error ?></div>
@@ -401,39 +531,93 @@ if (isset($_GET['clear_history'])) {
         </label>
     </form>
     <div id="preview"></div>
-    <?php if ($link): ?>
-        <div class="link">
-            <b>File link:</b><br>
-            <a href="<?= $link ?>" target="_blank"><?= $link ?></a>
-        </div>
-    <?php endif; ?>
     <?php if (!empty($_SESSION['history'])): ?>
-        <div class="link" style="margin-top:30px;">
-            <b>Upload history:</b>
-            <form method="get" style="display:inline; float:right; margin:0;">
-                <button type="submit" name="clear_history" value="1" style="background:#23272a;color:#fff;border:1px solid #36393f;border-radius:6px;padding:4px 14px 4px 10px;font-size:1rem;cursor:pointer;transition:background 0.2s;">Clear history</button>
-            </form>
-            <ul style="padding-left:18px; clear:both;">
-            <?php foreach ($_SESSION['history'] as $item): ?>
-                <?php
-                $metaFile = $uploadDir . $item['link'] . '.meta';
-                $expiresIn = '';
-                if (file_exists($metaFile)) {
-                    $created = (int)file_get_contents($metaFile);
-                    $left = $created + $ttl - time();
-                    if ($left > 0) {
-                        $days = floor($left / 86400);
-                        $hours = floor(($left % 86400) / 3600);
-                        $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
-                    } else {
-                        $expiresIn = 'Expired';
-                    }
+        <div class="history-list">
+        <?php foreach ($_SESSION['history'] as $idx => $item): ?>
+            <?php
+            $metaFile = $uploadDir . $item['link'] . '.meta';
+            $expiresIn = '';
+            $createdStr = '';
+            $type = '';
+            $isImg = false;
+            $isVid = false;
+            $isAudio = false;
+            $filePath = $uploadDir . $item['link'];
+            $ext = strtolower(pathinfo($item['link'], PATHINFO_EXTENSION));
+            if (file_exists($metaFile)) {
+                $created = (int)file_get_contents($metaFile);
+                $createdStr = date('Y-m-d H:i:s', $created) . ' GMT+3';
+                $left = $created + $ttl - time();
+                if ($left > 0) {
+                    $days = floor($left / 86400);
+                    $hours = floor(($left % 86400) / 3600);
+                    $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
+                } else {
+                    $expiresIn = 'Expired';
                 }
-                ?>
-                <li><a href="<?= $item['link'] ?>" target="_blank"><?= $item['filename'] ?></a> <span style="color:#888;font-size:0.95em;">(<?= $expiresIn ?>)</span></li>
-            <?php endforeach; ?>
-            </ul>
+            }
+            if (isImage($ext)) {
+                $type = 'image/' . $ext;
+                $isImg = true;
+            } elseif (isVideo($ext)) {
+                $type = 'video/' . $ext;
+                $isVid = true;
+            } elseif (isAudio($ext)) {
+                $type = 'audio/' . $ext;
+                $isAudio = true;
+            } else {
+                $type = $ext;
+            }
+            $url = htmlspecialchars($item['link']);
+            $filename = htmlspecialchars($item['filename']);
+            ?>
+            <div class="history-card">
+                <div class="history-preview">
+                    <?php if ($isImg && file_exists($filePath)): ?>
+                        <img src="uploads/<?= $url ?>" alt="preview" class="history-thumb">
+                    <?php elseif ($isVid): ?>
+                        <div class="history-icon history-video">🎬</div>
+                    <?php elseif ($isAudio): ?>
+                        <div class="history-icon history-audio">🎵</div>
+                    <?php else: ?>
+                        <div class="history-icon history-file">📄</div>
+                    <?php endif; ?>
+                </div>
+                <div class="history-info">
+                    <div class="history-filename"><a class="history-filename" href="<?= $url ?>" target="_blank"><?= $filename ?></a></div>
+                    <div class="history-link-row">
+                        <input class="history-link" type="text" value="<?= 'https://' . $_SERVER['HTTP_HOST'] . '/' . $url ?>" readonly>
+                        <button class="copy-btn" data-link="<?= $url ?>" title="Copy">📋</button>
+                        <button class="del-btn" data-idx="<?= $idx ?>" data-file="<?= $url ?>" title="Remove">🗑️</button>
+                    </div>
+                    <div class="history-meta">
+                        <span><?= $createdStr ?></span>
+                        <span><?= $type ?></span>
+                        <span><?= $expiresIn ?></span>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
         </div>
+        <script>
+        // Copy to clipboard
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.onclick = function() {
+                const link = btn.parentElement.querySelector('.history-link').value;
+                navigator.clipboard.writeText(link);
+                btn.textContent = '✔';
+                setTimeout(()=>{btn.textContent='📋';}, 1000);
+            };
+        });
+        // Remove from history
+        document.querySelectorAll('.del-btn').forEach(btn => {
+            btn.onclick = function() {
+                const idx = btn.getAttribute('data-idx');
+                const file = btn.getAttribute('data-file');
+                window.location = '?del_history=' + idx + '&del_file=' + encodeURIComponent(file);
+            };
+        });
+        </script>
     <?php endif; ?>
 </div>
 <div id="support-modal" class="modal" style="display:none;">
@@ -454,90 +638,28 @@ if (isset($_GET['clear_history'])) {
     </div>
   </div>
 </div>
-<script>
-// Paste screenshot support
-const fileInput = document.getElementById('fileInput');
-const uploadForm = document.getElementById('uploadForm');
-const preview = document.getElementById('preview');
-
-document.addEventListener('paste', function (event) {
-    const items = (event.clipboardData || event.originalEvent.clipboardData).items;
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-            const blob = items[i].getAsFile();
-            const dt = new DataTransfer();
-            dt.items.add(blob);
-            fileInput.files = dt.files;
-            // Show preview
-            const img = document.createElement('img');
-            img.style.maxWidth = '100%';
-            img.style.maxHeight = '200px';
-            img.src = URL.createObjectURL(blob);
-            preview.innerHTML = '';
-            preview.appendChild(img);
-            // Auto submit
-            setTimeout(() => uploadForm.submit(), 100);
-        }
-    }
-});
-fileInput.addEventListener('change', function() {
-    let label = document.getElementById('fileLabelText');
-    if (fileInput.files.length) {
-        label.textContent = fileInput.files[0].name;
-    } else {
-        label.textContent = 'Choose file';
-    }
-    preview.innerHTML = '';
-    if (fileInput.files.length && fileInput.files[0].type.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = '200px';
-        img.src = URL.createObjectURL(fileInput.files[0]);
-        preview.appendChild(img);
-    }
-    if (fileInput.files.length) {
-        setTimeout(() => uploadForm.submit(), 100);
-    }
-});
-document.querySelector('.support-btn').onclick = function(e) {
-    e.preventDefault();
-    document.getElementById('support-modal').style.display = 'flex';
-};
-document.getElementById('support-close').onclick = function() {
-    document.getElementById('support-modal').style.display = 'none';
-};
-window.onclick = function(event) {
-    let modal = document.getElementById('support-modal');
-    if (event.target === modal) modal.style.display = 'none';
-};
-// Drag & Drop upload
-window.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    document.body.classList.add('body-dragover');
-});
-window.addEventListener('dragleave', function(e) {
-    if (e.target === document.body) {
-        document.body.classList.remove('body-dragover');
-    }
-});
-window.addEventListener('drop', function(e) {
-    e.preventDefault();
-    document.body.classList.remove('body-dragover');
-    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
-        fileInput.files = e.dataTransfer.files;
-        let label = document.getElementById('fileLabelText');
-        label.textContent = fileInput.files[0].name;
-        preview.innerHTML = '';
-        if (fileInput.files[0].type.startsWith('image/')) {
-            const img = document.createElement('img');
-            img.style.maxWidth = '100%';
-            img.style.maxHeight = '200px';
-            img.src = URL.createObjectURL(fileInput.files[0]);
-            preview.appendChild(img);
-        }
-        setTimeout(() => uploadForm.submit(), 100);
-    }
-});
-</script>
+<div id="terms-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="modal-close" id="terms-close">&times;</span>
+    <h2>Terms and Privacy Policy</h2>
+    <h3>Terms of Service</h3>
+    <ul style="margin-bottom:18px;">
+      <li>This service allows you to upload and share files up to 100 MB.</li>
+      <li>All files are stored for 30 days and then automatically deleted.</li>
+      <li>You are solely responsible for the content you upload.</li>
+      <li>Do not upload illegal, harmful, or copyrighted content without permission.</li>
+      <li>The service is provided "as is" without any warranty.</li>
+    </ul>
+    <h3>Privacy Policy</h3>
+    <ul>
+      <li>No registration or personal data is required to use this service.</li>
+      <li>Uploaded files and access links are not indexed or shared publicly.</li>
+      <li>Your upload history is stored only in your browser session and is not accessible to others.</li>
+      <li>We do not track users or use cookies for advertising.</li>
+      <li>Files may be removed at any time for abuse or legal reasons.</li>
+    </ul>
+  </div>
+</div>
+<script src="js/main.js"></script>
 </body>
 </html> 
