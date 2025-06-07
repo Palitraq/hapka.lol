@@ -95,7 +95,7 @@ if (!$filename || !preg_match('/^[a-zA-Z0-9._-]+$/', $filename) || !file_exists(
         </style>
     </head>
     <body>
-        <div class="notfound">Неизвестная ссылка</div>
+        <div class="notfound">link not found</div>
         <a href="https://hapka.lol" class="home-btn">Home</a>
     </body>
     </html>
