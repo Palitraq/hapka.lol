@@ -91,6 +91,7 @@ if (isset($_GET['clear_history'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>File upload — hapka.lol</title>
     <style>
         body {
@@ -324,6 +325,53 @@ if (isset($_GET['clear_history'])) {
             outline: 3px dashed #5865f2 !important;
             outline-offset: -8px;
             background: #202225 !important;
+        }
+        @media (max-width: 700px) {
+            .header-wrap, .header, .header-underline, .container {
+                max-width: 98vw !important;
+                min-width: 0;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+            .container {
+                padding: 10vw 2vw 6vw 2vw !important;
+                font-size: 1.05em;
+            }
+            .header {
+                padding: 12px 0 6px 0;
+            }
+            .header-left, .header-right {
+                gap: 10px;
+            }
+            .logo {
+                font-size: 1.3rem;
+            }
+            .modal-content {
+                max-width: 98vw;
+                padding: 18px 8vw 18px 8vw;
+                font-size: 1em;
+            }
+            .custom-file-upload {
+                font-size: 1em;
+                padding: 12px 10px;
+            }
+            #fileLabelText {
+                font-size: 1em;
+            }
+            .link, .error {
+                font-size: 1em;
+            }
+            ul {
+                padding-left: 10px !important;
+            }
+            .modal-close {
+                top: 8px;
+                right: 12px;
+                font-size: 1.3rem;
+            }
+            audio, video, img {
+                max-width: 98vw !important;
+            }
         }
     </style>
 </head>

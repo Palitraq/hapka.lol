@@ -58,7 +58,7 @@ if (!$filename || !preg_match('/^[a-zA-Z0-9._-]+$/', $filename) || !file_exists(
     <html lang="ru">
     <head>
         <meta charset="UTF-8">
-        <title>Неизвестная ссылка</title>
+        <title>link not found</title>
         <style>
             body {
                 background: #181a1b;
