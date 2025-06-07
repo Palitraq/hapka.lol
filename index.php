@@ -570,6 +570,10 @@ if (isset($_GET['del_history'])) {
             }
             $url = htmlspecialchars($item['link']);
             $filename = htmlspecialchars($item['filename']);
+            $sizeMB = '';
+            if (file_exists($filePath)) {
+                $sizeMB = number_format(filesize($filePath) / 1048576, 2) . ' MB';
+            }
             ?>
             <div class="history-card">
                 <div class="history-preview">
@@ -589,6 +593,9 @@ if (isset($_GET['del_history'])) {
                         <input class="history-link" type="text" value="<?= 'https://' . $_SERVER['HTTP_HOST'] . '/' . $url ?>" readonly>
                         <button class="copy-btn" data-link="<?= $url ?>" title="Copy">📋</button>
                         <button class="del-btn" data-idx="<?= $idx ?>" data-file="<?= $url ?>" title="Remove">🗑️</button>
+                    </div>
+                    <div class="history-size" style="color:#b9bbbe;font-size:0.97em;margin-bottom:2px;">
+                        <?= $sizeMB ?>
                     </div>
                     <div class="history-meta">
                         <span><?= $createdStr ?></span>
