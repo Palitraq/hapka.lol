@@ -3,6 +3,35 @@ const fileInput = document.getElementById('fileInput');
 const uploadForm = document.getElementById('uploadForm');
 const preview = document.getElementById('preview');
 
+// Upload with progress bar
+function uploadWithProgress(file) {
+    const progress = document.getElementById('uploadProgress');
+    progress.value = 0;
+    progress.style.display = 'block';
+    const formData = new FormData();
+    formData.append('file', file);
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'index.php');
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            progress.value = Math.round((e.loaded / e.total) * 100);
+        }
+    };
+    xhr.onload = function() {
+        progress.style.display = 'none';
+        if (xhr.status === 200) {
+            window.location = window.location.pathname + '?link=' + encodeURIComponent(JSON.parse(xhr.responseText).link);
+        } else {
+            window.location.reload();
+        }
+    };
+    xhr.onerror = function() {
+        progress.style.display = 'none';
+        window.location.reload();
+    };
+    xhr.send(formData);
+}
+
 document.addEventListener('paste', function (event) {
     const items = (event.clipboardData || event.originalEvent.clipboardData).items;
     for (let i = 0; i < items.length; i++) {
