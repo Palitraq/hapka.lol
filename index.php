@@ -299,6 +299,8 @@ if (isset($_GET['del_history'])) {
             box-shadow: 0 2px 16px #000a;
             position: relative;
             font-size: 1.05rem;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-close {
             position: absolute;
