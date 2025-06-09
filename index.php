@@ -8,18 +8,18 @@ $storageDays = 30;
 $ttl = $storageDays * 24 * 60 * 60;
 
 // Удаление старых файлов
-foreach (glob($uploadDir . '*') as $file) {
-    if (preg_match('/\.meta$/', $file)) {
-        $base = substr($file, 0, -5);
-        if (!file_exists($base)) {
-            unlink($file);
-            continue;
-        }
-        $created = (int)@file_get_contents($file);
-        if ($created && $created + $ttl < time()) {
-            @unlink($base);
-            @unlink($file);
-        }
+foreach (glob($uploadDir . '*.meta') as $metaFile) {
+    $meta = @json_decode(@file_get_contents($metaFile), true);
+    if (!$meta || !isset($meta['created']) || !isset($meta['orig'])) {
+        @unlink($metaFile);
+        continue;
+    }
+    $created = (int)$meta['created'];
+    $origName = $meta['orig'];
+    $filePath = $uploadDir . $origName;
+    if ($created + $ttl < time()) {
+        @unlink($filePath);
+        @unlink($metaFile);
     }
 }
 
@@ -44,12 +44,40 @@ function randomString($length = 5) {
     return $str;
 }
 
-// Обработка загрузки
-$error = '';
+// Обработка очистки истории
+if (isset($_GET['clear_history'])) {
+    unset($_SESSION['history']);
+    header('Location: index.php');
+    exit;
+}
+// PHP: обработка удаления из истории и файла
+if (isset($_GET['del_history'])) {
+    $i = (int)$_GET['del_history'];
+    if (isset($_SESSION['history'][$i])) {
+        // Удаляем файл и .meta, если передан del_file
+        if (isset($_GET['del_file'])) {
+            $code = basename($_GET['del_file']);
+            $metaPath = $uploadDir . $code . '.meta';
+            if (file_exists($metaPath)) {
+                $meta = @json_decode(@file_get_contents($metaPath), true);
+                if ($meta && isset($meta['orig'])) {
+                    $filePath = $uploadDir . $meta['orig'];
+                    if (file_exists($filePath)) unlink($filePath);
+                }
+                unlink($metaPath);
+            }
+        }
+        array_splice($_SESSION['history'], $i, 1);
+    }
+    header('Location: index.php');
+    exit;
+}
+
 $link = '';
 if (isset($_GET['link'])) {
     $link = htmlspecialchars($_GET['link']);
 }
+$error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
     $file = $_FILES['file'];
     if ($file['error'] !== UPLOAD_ERR_OK) {
@@ -57,52 +85,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
     } elseif ($file['size'] > $maxFileSize) {
         $error = 'File is too large (max 100 MB).';
     } else {
-        $ext = getExtension($file['name']);
+        $origName = $file['name'];
+        $ext = getExtension($origName);
         do {
-            $uniq = randomString(5) . '.' . $ext;
-            $target = $uploadDir . $uniq;
-        } while (file_exists($target));
+            $short = randomString(5);
+            $metaPath = $uploadDir . $short . '.meta';
+        } while (file_exists($metaPath));
+        $target = $uploadDir . $origName;
+        // Если файл с таким именем уже есть, добавляем суффикс
+        $base = pathinfo($origName, PATHINFO_FILENAME);
+        $i = 1;
+        while (file_exists($target)) {
+            $origName = $base . "_" . $i . "." . $ext;
+            $target = $uploadDir . $origName;
+            $i++;
+        }
         if (move_uploaded_file($file['tmp_name'], $target)) {
-            // Сохраняем дату загрузки
-            file_put_contents($uploadDir . $uniq . '.meta', time());
+            // Сохраняем метаинформацию
+            file_put_contents($metaPath, json_encode([
+                'orig' => $origName,
+                'created' => time()
+            ]));
             // История загрузок в сессии
             if (!isset($_SESSION['history'])) $_SESSION['history'] = [];
             array_unshift($_SESSION['history'], [
-                'link' => $uniq,
-                'filename' => htmlspecialchars($file['name'])
+                'code' => $short,
+                'filename' => htmlspecialchars($origName)
             ]);
             $_SESSION['history'] = array_slice($_SESSION['history'], 0, 10);
-            header('Location: index.php?link=' . urlencode($uniq));
+            header('Location: index.php?link=' . urlencode($short));
             exit;
         } else {
             $error = 'Failed to save file.';
         }
     }
-}
-
-// Обработка очистки истории
-if (isset($_GET['clear_history'])) {
-    unset($_SESSION['history']);
-    header('Location: index.php');
-    exit;
-}
-
-// PHP: обработка удаления из истории
-if (isset($_GET['del_history'])) {
-    $i = (int)$_GET['del_history'];
-    if (isset($_SESSION['history'][$i])) {
-        // Удаляем файл и .meta, если передан del_file
-        if (isset($_GET['del_file'])) {
-            $file = basename($_GET['del_file']);
-            $filePath = $uploadDir . $file;
-            $metaPath = $filePath . '.meta';
-            if (file_exists($filePath)) unlink($filePath);
-            if (file_exists($metaPath)) unlink($metaPath);
-        }
-        array_splice($_SESSION['history'], $i, 1);
-    }
-    header('Location: index.php');
-    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -537,50 +553,56 @@ if (isset($_GET['del_history'])) {
         <div class="history-list">
         <?php foreach ($_SESSION['history'] as $idx => $item): ?>
             <?php
-            $metaFile = $uploadDir . $item['link'] . '.meta';
+            $code = $item['code'];
+            $metaFile = $uploadDir . $code . '.meta';
             $expiresIn = '';
             $createdStr = '';
             $type = '';
             $isImg = false;
             $isVid = false;
             $isAudio = false;
-            $filePath = $uploadDir . $item['link'];
-            $ext = strtolower(pathinfo($item['link'], PATHINFO_EXTENSION));
+            $origName = '';
+            $sizeMB = '';
             if (file_exists($metaFile)) {
-                $created = (int)file_get_contents($metaFile);
-                $createdStr = date('Y-m-d H:i:s', $created) . ' GMT+3';
-                $left = $created + $ttl - time();
-                if ($left > 0) {
-                    $days = floor($left / 86400);
-                    $hours = floor(($left % 86400) / 3600);
-                    $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
-                } else {
-                    $expiresIn = 'Expired';
+                $meta = @json_decode(@file_get_contents($metaFile), true);
+                if ($meta && isset($meta['orig'])) {
+                    $origName = $meta['orig'];
+                    $filePath = $uploadDir . $origName;
+                    if (file_exists($filePath)) {
+                        $sizeMB = number_format(filesize($filePath) / 1048576, 2) . ' MB';
+                    }
+                    $ext = getExtension($origName);
+                    if (isImage($ext)) {
+                        $type = 'image/' . $ext;
+                        $isImg = true;
+                    } elseif (isVideo($ext)) {
+                        $type = 'video/' . $ext;
+                        $isVid = true;
+                    } elseif (isAudio($ext)) {
+                        $type = 'audio/' . $ext;
+                        $isAudio = true;
+                    } else {
+                        $type = $ext;
+                    }
+                    $created = (int)$meta['created'];
+                    $createdStr = date('Y-m-d H:i:s', $created) . ' GMT+3';
+                    $left = $created + $ttl - time();
+                    if ($left > 0) {
+                        $days = floor($left / 86400);
+                        $hours = floor(($left % 86400) / 3600);
+                        $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
+                    } else {
+                        $expiresIn = 'Expired';
+                    }
                 }
             }
-            if (isImage($ext)) {
-                $type = 'image/' . $ext;
-                $isImg = true;
-            } elseif (isVideo($ext)) {
-                $type = 'video/' . $ext;
-                $isVid = true;
-            } elseif (isAudio($ext)) {
-                $type = 'audio/' . $ext;
-                $isAudio = true;
-            } else {
-                $type = $ext;
-            }
-            $url = htmlspecialchars($item['link']);
-            $filename = htmlspecialchars($item['filename']);
-            $sizeMB = '';
-            if (file_exists($filePath)) {
-                $sizeMB = number_format(filesize($filePath) / 1048576, 2) . ' MB';
-            }
+            $url = htmlspecialchars($code);
+            $filename = htmlspecialchars($origName);
             ?>
             <div class="history-card">
                 <div class="history-preview">
-                    <?php if ($isImg && file_exists($filePath)): ?>
-                        <img src="uploads/<?= $url ?>" alt="preview" class="history-thumb">
+                    <?php if ($isImg && !empty($origName) && file_exists($uploadDir . $origName)): ?>
+                        <img src="uploads/<?= rawurlencode($origName) ?>" alt="preview" class="history-thumb">
                     <?php elseif ($isVid): ?>
                         <div class="history-icon history-video">🎬</div>
                     <?php elseif ($isAudio): ?>

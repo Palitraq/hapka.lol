@@ -5,4 +5,8 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
  
 # Всё остальное отправляем на view.php
-RewriteRule ^([a-zA-Z0-9._-]+\.[a-z0-9]+)$ view.php?f=$1 [L,QSA] 
+RewriteRule ^([a-zA-Z0-9._-]+\.[a-z0-9]+)$ view.php?f=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z]{5})$ download.php?code=$1 [L] 
