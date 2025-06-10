@@ -1,0 +1,84 @@
+<?php
+session_start();
+// Load password from .env
+function getEnvVar($key) {
+    $lines = @file(__DIR__ . '/.env');
+    if (!$lines) return null;
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#') continue;
+        if (strpos($line, '=') !== false) {
+            list($k, $v) = explode('=', $line, 2);
+            if (trim($k) === $key) return trim($v);
+        }
+    }
+    return null;
+}
+$adminPassword = getEnvVar('ADMIN_PASSWORD');
+if (!$adminPassword) {
+    die('Admin password not set in .env');
+}
+// Authorization
+if (isset($_POST['password'])) {
+    if ($_POST['password'] === $adminPassword) {
+        $_SESSION['is_admin'] = true;
+        header('Location: admin.php');
+        exit;
+    } else {
+        $error = 'Incorrect password';
+    }
+}
+if (isset($_GET['logout'])) {
+    unset($_SESSION['is_admin']);
+    header('Location: admin.php');
+    exit;
+}
+if (empty($_SESSION['is_admin'])) {
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head><meta charset="UTF-8"><title>Admin Panel — hapka.lol</title></head>
+    <body style="background:#181a1b;color:#fff;font-family:sans-serif;text-align:center;padding:40px;">
+        <h2>Admin Login</h2>
+        <?php if (!empty($error)) echo '<div style="color:#f55">'.$error.'</div>'; ?>
+        <form method="post">
+            <input type="password" name="password" placeholder="Password" style="padding:8px;font-size:1.1em;">
+            <button type="submit" style="padding:8px 18px;">Login</button>
+        </form>
+    </body></html>
+    <?php
+    exit;
+}
+// File statistics
+$uploadDir = __DIR__ . '/uploads/';
+$allFiles = glob($uploadDir . '*');
+$metaFiles = glob($uploadDir . '*.meta');
+$currentFiles = 0;
+foreach ($metaFiles as $meta) {
+    $metaData = @json_decode(@file_get_contents($meta), true);
+    if ($metaData && isset($metaData['orig'])) {
+        $filePath = $uploadDir . $metaData['orig'];
+        if (file_exists($filePath)) $currentFiles++;
+    }
+}
+$totalFiles = count($metaFiles);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel — hapka.lol</title>
+    <style>
+        body { background:#181a1b; color:#fff; font-family:sans-serif; padding:40px; }
+        .stat { font-size:1.3em; margin:18px 0; }
+        .logout { color:#8ab4f8; text-decoration:none; margin-left:18px; }
+        .logout:hover { text-decoration:underline; }
+    </style>
+</head>
+<body>
+    <h2>hapka.lol Admin Panel</h2>
+    <div class="stat">Current files: <b><?= $currentFiles ?></b></div>
+    <div class="stat">Total uploaded files: <b><?= $totalFiles ?></b></div>
+    <a href="?logout=1" class="logout">Logout</a>
+</body>
+</html> 
