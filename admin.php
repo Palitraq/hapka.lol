@@ -52,16 +52,23 @@ if (empty($_SESSION['is_admin'])) {
 // File statistics
 $uploadDir = __DIR__ . '/uploads/';
 $allFiles = glob($uploadDir . '*');
-$metaFiles = glob($uploadDir . '*.meta');
 $currentFiles = 0;
-foreach ($metaFiles as $meta) {
-    $metaData = @json_decode(@file_get_contents($meta), true);
-    if ($metaData && isset($metaData['orig'])) {
-        $filePath = $uploadDir . $metaData['orig'];
-        if (file_exists($filePath)) $currentFiles++;
+foreach ($allFiles as $file) {
+    if (is_file($file) && substr($file, -5) !== '.meta') {
+        $currentFiles++;
     }
 }
-$totalFiles = count($metaFiles);
+$metaFiles = glob($uploadDir . '*.meta');
+$uploadedLastMonth = 0;
+$monthAgo = time() - 30 * 24 * 60 * 60;
+foreach ($metaFiles as $meta) {
+    $metaData = @json_decode(@file_get_contents($meta), true);
+    if ($metaData && isset($metaData['created'])) {
+        if ($metaData['created'] >= $monthAgo) {
+            $uploadedLastMonth++;
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,7 +85,7 @@ $totalFiles = count($metaFiles);
 <body>
     <h2>hapka.lol Admin Panel</h2>
     <div class="stat">Current files: <b><?= $currentFiles ?></b></div>
-    <div class="stat">Total uploaded files: <b><?= $totalFiles ?></b></div>
+    <div class="stat">Uploaded in last 30 days: <b><?= $uploadedLastMonth ?></b></div>
     <a href="?logout=1" class="logout">Logout</a>
 </body>
 </html> 

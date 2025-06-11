@@ -54,7 +54,7 @@ if (isset($_GET['clear_history'])) {
 if (isset($_GET['del_history'])) {
     $i = (int)$_GET['del_history'];
     if (isset($_SESSION['history'][$i])) {
-        // Удаляем файл и .meta, если передан del_file
+        // Удаляем только сам файл, .meta оставляем
         if (isset($_GET['del_file'])) {
             $code = basename($_GET['del_file']);
             $metaPath = $uploadDir . $code . '.meta';
@@ -64,7 +64,6 @@ if (isset($_GET['del_history'])) {
                     $filePath = $uploadDir . $meta['orig'];
                     if (file_exists($filePath)) unlink($filePath);
                 }
-                unlink($metaPath);
             }
         }
         array_splice($_SESSION['history'], $i, 1);
