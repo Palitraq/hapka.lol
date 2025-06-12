@@ -11,7 +11,7 @@ $ttl = $storageDays * 24 * 60 * 60;
 foreach (glob($uploadDir . '*.meta') as $metaFile) {
     $meta = @json_decode(@file_get_contents($metaFile), true);
     if (!$meta || !isset($meta['created']) || !isset($meta['orig'])) {
-        @unlink($metaFile);
+        // @unlink($metaFile); // больше не удаляем .meta
         continue;
     }
     $created = (int)$meta['created'];
@@ -19,7 +19,7 @@ foreach (glob($uploadDir . '*.meta') as $metaFile) {
     $filePath = $uploadDir . $origName;
     if ($created + $ttl < time()) {
         @unlink($filePath);
-        @unlink($metaFile);
+        // @unlink($metaFile); // больше не удаляем .meta
     }
 }
 
