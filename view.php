@@ -8,13 +8,11 @@ foreach (glob($uploadDir . '*') as $file) {
     if (preg_match('/\.meta$/', $file)) {
         $base = substr($file, 0, -5);
         if (!file_exists($base)) {
-            unlink($file);
             continue;
         }
         $created = (int)@file_get_contents($file);
         if ($created && $created + $ttl < time()) {
             @unlink($base);
-            @unlink($file);
         }
     }
 }
@@ -46,7 +44,6 @@ if (file_exists($metaFile)) {
     } else {
         $expiresIn = 'Expired';
         @unlink($filepath);
-        @unlink($metaFile);
     }
 }
 
