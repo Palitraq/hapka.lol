@@ -80,10 +80,29 @@ foreach ($metaFiles as $meta) {
         .stat { font-size:1.3em; margin:18px 0; }
         .logout { color:#8ab4f8; text-decoration:none; margin-left:18px; }
         .logout:hover { text-decoration:underline; }
+        .site-link {
+            display: inline-block;
+            margin-bottom: 28px;
+            padding: 10px 28px;
+            background: linear-gradient(90deg, #8f5cff 0%, #5865f2 100%);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 1.15em;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 2px 12px #0006;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .site-link:hover {
+            background: linear-gradient(90deg, #5865f2 0%, #8f5cff 100%);
+            box-shadow: 0 4px 24px #0008;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
     <h2>hapka.lol Admin Panel</h2>
+    <a href="https://hapka.lol" target="_blank" class="site-link">🌐 Go to hapka.lol</a>
     <div class="stat">Current files: <b><?= $currentFiles ?></b></div>
     <div class="stat">Uploaded in last 30 days: <b><?= $uploadedLastMonth ?></b></div>
     <a href="?logout=1" class="logout">Logout</a>
