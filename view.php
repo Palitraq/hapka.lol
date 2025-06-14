@@ -3,20 +3,6 @@ $uploadDir = __DIR__ . '/uploads/';
 $storageDays = 30;
 $ttl = $storageDays * 24 * 60 * 60;
 
-// Удаление старых файлов
-foreach (glob($uploadDir . '*') as $file) {
-    if (preg_match('/\.meta$/', $file)) {
-        $base = substr($file, 0, -5);
-        if (!file_exists($base)) {
-            continue;
-        }
-        $created = (int)@file_get_contents($file);
-        if ($created && $created + $ttl < time()) {
-            @unlink($base);
-        }
-    }
-}
-
 $filename = isset($_GET['f']) ? basename($_GET['f']) : '';
 $filepath = $uploadDir . $filename;
 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));

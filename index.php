@@ -8,20 +8,7 @@ $storageDays = 30;
 $ttl = $storageDays * 24 * 60 * 60;
 
 // Удаление старых файлов
-foreach (glob($uploadDir . '*.meta') as $metaFile) {
-    $meta = @json_decode(@file_get_contents($metaFile), true);
-    if (!$meta || !isset($meta['created']) || !isset($meta['orig'])) {
-        // @unlink($metaFile); // больше не удаляем .meta
-        continue;
-    }
-    $created = (int)$meta['created'];
-    $origName = $meta['orig'];
-    $filePath = $uploadDir . $origName;
-    if ($created + $ttl < time()) {
-        @unlink($filePath);
-        // @unlink($metaFile); // больше не удаляем .meta
-    }
-}
+// (удалено)
 
 function getExtension($filename) {
     return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
