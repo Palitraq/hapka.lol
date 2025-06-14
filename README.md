@@ -1,4 +1,4 @@
-# [hapka.lol](https:/hapka.lol) uploader (PHP version)
+# [hapka.lol](https://hapka.lol/) uploader (PHP version)
 
 - Upload files up to 100 MB
 - Get a unique link for each file
