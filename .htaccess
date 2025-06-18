@@ -3,9 +3,14 @@ RewriteEngine On
 # Если файл или папка реально существуют — отдаем их напрямую
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
- 
+
 # Всё остальное отправляем на view.php
 RewriteRule ^([a-zA-Z0-9._-]+\.[a-z0-9]+)$ view.php?f=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Короткая ссылка теперь ведет на view.php для предпросмотра любых файлов
+RewriteRule ^([a-zA-Z]{5})$ view.php?code=$1 [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

@@ -7,8 +7,22 @@ $filename = isset($_GET['f']) ? basename($_GET['f']) : '';
 $filepath = $uploadDir . $filename;
 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
+// Если передан code, ищем .meta и подставляем имя файла
+if (isset($_GET['code'])) {
+    $code = preg_replace('/[^a-zA-Z0-9]/', '', $_GET['code']);
+    $metaPath = $uploadDir . $code . '.meta';
+    if (file_exists($metaPath)) {
+        $meta = @json_decode(@file_get_contents($metaPath), true);
+        if ($meta && isset($meta['orig'])) {
+            $filename = $meta['orig'];
+            $filepath = $uploadDir . $filename;
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        }
+    }
+}
+
 function isImage($ext) {
-    return in_array($ext, ['jpg','jpeg','png','gif','webp']);
+    return in_array($ext, ['jpg','jpeg','png','gif','webp','avif']);
 }
 function isVideo($ext) {
     return in_array($ext, ['mp4','webm','mov','avi','mkv']);

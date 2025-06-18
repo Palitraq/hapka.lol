@@ -26,9 +26,13 @@ $mime = 'application/octet-stream';
 if (in_array($ext, ['jpg','jpeg','png','gif','webp'])) {
     $mime = 'image/' . ($ext === 'jpg' ? 'jpeg' : $ext);
 } elseif (in_array($ext, ['mp4','webm','mov','avi','mkv'])) {
-    $mime = 'video/' . $ext;
+    $mime = $ext === 'avif' ? 'video/avif' : 'video/' . $ext;
 } elseif ($ext === 'mp3') {
     $mime = 'audio/mp3';
+}
+if ($ext === 'avif') {
+    http_response_code(404);
+    exit('Not found');
 }
 // Для изображений, видео, mp3 — inline, для остальных — attachment
 $disposition = (strpos($mime, 'image/') === 0 || strpos($mime, 'video/') === 0 || strpos($mime, 'audio/') === 0)

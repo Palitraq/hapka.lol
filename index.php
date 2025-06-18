@@ -14,7 +14,7 @@ function getExtension($filename) {
     return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 }
 function isImage($ext) {
-    return in_array($ext, ['jpg','jpeg','png','gif','webp']);
+    return in_array($ext, ['jpg','jpeg','png','gif','webp','avif']);
 }
 function isVideo($ext) {
     return in_array($ext, ['mp4','webm','mov','avi','mkv']);

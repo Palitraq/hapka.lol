@@ -3,7 +3,6 @@ const fileInput = document.getElementById('fileInput');
 const uploadForm = document.getElementById('uploadForm');
 const preview = document.getElementById('preview');
 
-// Прогресс-бар в стиле Linux
 const progressBar = document.createElement('div');
 progressBar.id = 'uploadProgressBar';
 progressBar.style = 'font-family: monospace; color: #8ab4f8; margin: 18px 0 12px 0; font-size: 1.1em;';
