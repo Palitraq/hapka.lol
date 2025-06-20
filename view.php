@@ -47,7 +47,7 @@ if (file_exists($metaFile)) {
     }
 }
 
-if (!$filename || !preg_match('/^[a-zA-Z0-9._-]+$/', $filename) || !file_exists($filepath)) {
+if (!$filename || !preg_match('/^[a-zA-Z0-9._+\-]+$/', $filename) || !file_exists($filepath)) {
     // 404 страница
     http_response_code(404);
     ?>
