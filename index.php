@@ -77,19 +77,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             $short = randomString(5);
             $metaPath = $uploadDir . $short . '.meta';
         } while (file_exists($metaPath));
-        $target = $uploadDir . $origName;
-        // Если файл с таким именем уже есть, добавляем суффикс
-        $base = pathinfo($origName, PATHINFO_FILENAME);
-        $i = 1;
-        while (file_exists($target)) {
-            $origName = $base . "_" . $i . "." . $ext;
-            $target = $uploadDir . $origName;
-            $i++;
+        // Генерируем уникальное имя файла только для .png
+        if ($ext === 'png') {
+            do {
+                $randomName = randomString(8) . '.' . $ext;
+                $target = $uploadDir . $randomName;
+            } while (file_exists($target));
+        } else {
+            $randomName = $origName;
+            $target = $uploadDir . $randomName;
         }
         if (move_uploaded_file($file['tmp_name'], $target)) {
             // Сохраняем метаинформацию
             file_put_contents($metaPath, json_encode([
                 'orig' => $origName,
+                'saved' => $randomName,
                 'created' => time()
             ]));
             // История загрузок в сессии

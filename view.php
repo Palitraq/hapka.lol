@@ -13,8 +13,8 @@ if (isset($_GET['code'])) {
     $metaPath = $uploadDir . $code . '.meta';
     if (file_exists($metaPath)) {
         $meta = @json_decode(@file_get_contents($metaPath), true);
-        if ($meta && isset($meta['orig'])) {
-            $filename = $meta['orig'];
+        if ($meta && (isset($meta['saved']) || isset($meta['orig']))) {
+            $filename = isset($meta['saved']) ? $meta['saved'] : $meta['orig'];
             $filepath = $uploadDir . $filename;
             $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         }

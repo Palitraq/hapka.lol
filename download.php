@@ -16,7 +16,8 @@ if (!$meta || !isset($meta['orig'])) {
     exit('Not found');
 }
 $origName = $meta['orig'];
-$filePath = $uploadDir . $origName;
+$savedName = isset($meta['saved']) ? $meta['saved'] : $origName;
+$filePath = $uploadDir . $savedName;
 if (!file_exists($filePath)) {
     http_response_code(404);
     exit('Not found');
