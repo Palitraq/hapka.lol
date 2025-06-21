@@ -1,6 +1,6 @@
 # [hapka.lol](https://hapka.lol/) uploader (PHP version)
 
-![4x_2](https://github.com/user-attachments/assets/09771b2d-98ec-401a-8918-583ef7b76ea7)
+![lerolero-4x](https://github.com/user-attachments/assets/85826a10-5678-451c-9c44-01469074769f)
 
 - Upload files up to 100 MB
 - Get a unique link for each file
