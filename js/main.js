@@ -9,6 +9,8 @@ progressBar.style = 'font-family: monospace; color: #8ab4f8; margin: 18px 0 12px
 progressBar.hidden = true;
 preview.parentNode.insertBefore(progressBar, preview);
 
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+
 function showProgress(percent) {
     if (percent === 100) {
         progressBar.textContent = 'Done!';
@@ -26,12 +28,25 @@ function showProgress(percent) {
     progressBar.textContent = text;
     progressBar.hidden = false;
 }
+
 function hideProgress() {
     progressBar.hidden = true;
     progressBar.textContent = '';
+    progressBar.style.color = '#8ab4f8';
+}
+
+function showFileTooLarge() {
+    progressBar.style.color = 'red';
+    progressBar.textContent = 'File is too large (max 100 MB).';
+    progressBar.hidden = false;
+    setTimeout(hideProgress, 2000);
 }
 
 function uploadWithProgress(file) {
+    if (file.size > MAX_FILE_SIZE) {
+        showFileTooLarge();
+        return;
+    }
     const formData = new FormData();
     formData.append('file', file);
     const xhr = new XMLHttpRequest();
@@ -71,6 +86,13 @@ uploadForm.onsubmit = function(e) {
 fileInput.addEventListener('change', function() {
     let label = document.getElementById('fileLabelText');
     if (fileInput.files.length) {
+        if (fileInput.files[0].size > MAX_FILE_SIZE) {
+            showFileTooLarge();
+            fileInput.value = '';
+            label.textContent = 'Choose file';
+            preview.innerHTML = '';
+            return;
+        }
         label.textContent = fileInput.files[0].name;
         preview.innerHTML = '';
         if (fileInput.files[0].type.startsWith('image/')) {
@@ -92,6 +114,10 @@ document.addEventListener('paste', function (event) {
     for (let i = 0; i < items.length; i++) {
         if (items[i].type.indexOf('image') !== -1) {
             const blob = items[i].getAsFile();
+            if (blob.size > MAX_FILE_SIZE) {
+                showFileTooLarge();
+                return;
+            }
             const dt = new DataTransfer();
             dt.items.add(blob);
             fileInput.files = dt.files;
@@ -111,6 +137,14 @@ window.addEventListener('drop', function(e) {
     e.preventDefault();
     document.body.classList.remove('body-dragover');
     if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        if (e.dataTransfer.files[0].size > MAX_FILE_SIZE) {
+            showFileTooLarge();
+            fileInput.value = '';
+            let label = document.getElementById('fileLabelText');
+            label.textContent = 'Choose file';
+            preview.innerHTML = '';
+            return;
+        }
         fileInput.files = e.dataTransfer.files;
         let label = document.getElementById('fileLabelText');
         label.textContent = fileInput.files[0].name;
