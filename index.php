@@ -47,10 +47,13 @@ if (isset($_GET['del_history'])) {
             $metaPath = $uploadDir . $code . '.meta';
             if (file_exists($metaPath)) {
                 $meta = @json_decode(@file_get_contents($metaPath), true);
-                if ($meta && isset($meta['orig'])) {
-                    $filePath = $uploadDir . $meta['orig'];
+                if ($meta && (isset($meta['saved']) || isset($meta['orig']))) {
+                    $fileToDelete = isset($meta['saved']) ? $meta['saved'] : $meta['orig'];
+                    $filePath = $uploadDir . $fileToDelete;
                     if (file_exists($filePath)) unlink($filePath);
                 }
+                // Удаляем .meta файл
+                unlink($metaPath);
             }
         }
         array_splice($_SESSION['history'], $i, 1);
