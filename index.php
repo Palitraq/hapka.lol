@@ -67,48 +67,75 @@ if (isset($_GET['link'])) {
     $link = htmlspecialchars($_GET['link']);
 }
 $error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
-    $file = $_FILES['file'];
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        $error = 'Upload error.';
-    } elseif ($file['size'] > $maxFileSize) {
-        $error = 'File is too large (max 100 MB).';
-    } else {
-        $origName = $file['name'];
-        $ext = getExtension($origName);
-        do {
-            $short = randomString(5);
-            $metaPath = $uploadDir . $short . '.meta';
-        } while (file_exists($metaPath));
-        // Генерируем уникальное имя файла только для .png
-        if ($ext === 'png') {
+$uploadedFiles = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
+    $files = $_FILES['files'];
+    $uploadCount = count($files['name']);
+    
+    for ($i = 0; $i < $uploadCount; $i++) {
+        if ($files['error'][$i] !== UPLOAD_ERR_OK) {
+            $error = 'Upload error for file ' . ($i + 1) . '.';
+            break;
+        } elseif ($files['size'][$i] > $maxFileSize) {
+            $error = 'File ' . ($i + 1) . ' is too large (max 100 MB).';
+            break;
+        } else {
+            $origName = $files['name'][$i];
+            $ext = getExtension($origName);
             do {
-                $randomName = randomString(8) . '.' . $ext;
+                $short = randomString(5);
+                $metaPath = $uploadDir . $short . '.meta';
+            } while (file_exists($metaPath));
+            
+            // Генерируем уникальное имя файла только для .png
+            if ($ext === 'png') {
+                do {
+                    $randomName = randomString(8) . '.' . $ext;
+                    $target = $uploadDir . $randomName;
+                } while (file_exists($target));
+            } else {
+                $randomName = $origName;
                 $target = $uploadDir . $randomName;
-            } while (file_exists($target));
-        } else {
-            $randomName = $origName;
-            $target = $uploadDir . $randomName;
+            }
+            
+            if (move_uploaded_file($files['tmp_name'][$i], $target)) {
+                // Сохраняем метаинформацию
+                file_put_contents($metaPath, json_encode([
+                    'orig' => $origName,
+                    'saved' => $randomName,
+                    'created' => time()
+                ]));
+                
+                // История загрузок в сессии
+                if (!isset($_SESSION['history'])) $_SESSION['history'] = [];
+                array_unshift($_SESSION['history'], [
+                    'code' => $short,
+                    'filename' => htmlspecialchars($origName)
+                ]);
+                
+                $uploadedFiles[] = $short;
+            } else {
+                $error = 'Failed to save file ' . ($i + 1) . '.';
+                break;
+            }
         }
-        if (move_uploaded_file($file['tmp_name'], $target)) {
-            // Сохраняем метаинформацию
-            file_put_contents($metaPath, json_encode([
-                'orig' => $origName,
-                'saved' => $randomName,
-                'created' => time()
-            ]));
-            // История загрузок в сессии
-            if (!isset($_SESSION['history'])) $_SESSION['history'] = [];
-            array_unshift($_SESSION['history'], [
-                'code' => $short,
-                'filename' => htmlspecialchars($origName)
-            ]);
-            $_SESSION['history'] = array_slice($_SESSION['history'], 0, 10);
-            header('Location: index.php?link=' . urlencode($short));
-            exit;
+    }
+    
+    // Ограничиваем историю до 10 последних файлов
+    if (isset($_SESSION['history'])) {
+        $_SESSION['history'] = array_slice($_SESSION['history'], 0, 10);
+    }
+    
+    if (empty($error) && !empty($uploadedFiles)) {
+        // Если загружен только один файл, перенаправляем на него
+        if (count($uploadedFiles) === 1) {
+            header('Location: index.php?link=' . urlencode($uploadedFiles[0]));
         } else {
-            $error = 'Failed to save file.';
+            // Если несколько файлов, показываем все ссылки
+            $link = implode(',', $uploadedFiles);
         }
+        exit;
     }
 }
 ?>
@@ -331,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             cursor: pointer;
             font-size: 1rem;
             font-weight: 500;
-            transition: background 0.2s, border 0.2s, color 0.2s;
+            transition: background 0.2s, border 0.2s, color 0.2s, transform 0.2s;
             margin-bottom: 10px;
             user-select: none;
         }
@@ -339,6 +366,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             background: #36393f;
             color: #fff;
             border: 1px solid #5865f2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+        }
+        .custom-file-upload:active {
+            transform: translateY(0);
         }
         .custom-file-upload input[type="file"] {
             display: none;
@@ -352,6 +384,122 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             outline: 3px dashed #5865f2 !important;
             outline-offset: -8px;
             background: #202225 !important;
+            animation: pulse 1.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.4);
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 0 0 20px rgba(88, 101, 242, 0);
+                transform: scale(1.02);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0, -8px, 0);
+            }
+            70% {
+                transform: translate3d(0, -4px, 0);
+            }
+            90% {
+                transform: translate3d(0, -2px, 0);
+            }
+        }
+        
+        @keyframes progressGlow {
+            0% {
+                box-shadow: 0 0 5px rgba(88, 101, 242, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(88, 101, 242, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 5px rgba(88, 101, 242, 0.5);
+            }
+        }
+        
+        .upload-animation {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .link-animation {
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        .history-card {
+            animation: fadeInUp 0.4s ease-out;
+        }
+        
+        .copy-btn:hover {
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        .progress-glow {
+            animation: progressGlow 2s ease-in-out infinite;
+        }
+        
+        .file-preview {
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+        
+        .file-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(88, 101, 242, 0.3);
+        }
+        
+        .drag-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(88, 101, 242, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .drag-indicator.show {
+            opacity: 1;
+        }
+        
+        .upload-success {
+            animation: bounce 0.8s ease-in-out;
         }
         @media (max-width: 700px) {
             .header-wrap, .header, .header-underline, .container {
@@ -480,6 +628,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             background: #5865f2;
             color: #fff;
         }
+        .copy-all-btn {
+            background: #5865f2;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .copy-all-btn:hover {
+            background: #4752c4;
+            transform: translateY(-1px);
+        }
+        .multiple-links {
+            background: #23272a;
+            border: 1px solid #36393f;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #36393f;
+        }
+        .link-item:last-child {
+            border-bottom: none;
+        }
+        .link-item a {
+            flex: 1;
+            margin-right: 8px;
+            word-break: break-all;
+        }
         .history-meta {
             color: #b9bbbe;
             font-size: 0.97em;
@@ -525,21 +709,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
     </div>
     <div class="header-underline"></div>
 </div>
-<div class="container">
+<div class="container upload-animation">
     <div style="text-align:left; margin-bottom:18px;">
         <a href="#" id="terms-link" style="color:#8ab4f8;text-decoration:underline;font-size:1.05em;">Terms and Privacy Policy</a>
     </div>
-    <h2>Upload file (up to 100 MB)</h2>
+    <h2>Upload files (up to 100 MB each)</h2>
     <?php if ($error): ?>
         <div class="error"><?= $error ?></div>
     <?php endif; ?>
     <form id="uploadForm" method="post" enctype="multipart/form-data" autocomplete="off" style="margin-top:0;margin-bottom:0;">
         <label class="custom-file-upload" style="margin-top:0;margin-bottom:10px;">
-            <input type="file" id="fileInput" name="file" required>
-            <span id="fileLabelText">Choose file</span>
+            <input type="file" id="fileInput" name="files" required multiple>
+            <span id="fileLabelText">Choose files</span>
         </label>
     </form>
     <div id="preview"></div>
+    
+    <?php if ($link): ?>
+        <div class="link link-animation">
+            <?php 
+            $links = explode(',', $link);
+            if (count($links) === 1): ?>
+                <strong>Your file:</strong><br>
+                <a href="<?= htmlspecialchars($link) ?>" target="_blank">https://<?= $_SERVER['HTTP_HOST'] ?>/<?= htmlspecialchars($link) ?></a>
+            <?php else: ?>
+                <strong>Your files (<?= count($links) ?>):</strong>
+                <div class="multiple-links">
+                    <?php foreach ($links as $index => $fileLink): ?>
+                        <div class="link-item">
+                            <a href="<?= htmlspecialchars($fileLink) ?>" target="_blank">https://<?= $_SERVER['HTTP_HOST'] ?>/<?= htmlspecialchars($fileLink) ?></a>
+                            <button class="copy-btn" data-link="https://<?= $_SERVER['HTTP_HOST'] ?>/<?= htmlspecialchars($fileLink) ?>" title="Copy">📋</button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <div style="margin-top: 12px; text-align: center;">
+                    <button id="copyAllBtn" class="copy-all-btn">
+                        📋 Copy all links
+                    </button>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
     <?php if (!empty($_SESSION['history'])): ?>
         <div class="history-list">
         <?php foreach ($_SESSION['history'] as $idx => $item): ?>
@@ -683,5 +893,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
   </div>
 </div>
 <script src="js/main.js"></script>
+<script>
+// Копирование всех ссылок
+if (document.getElementById('copyAllBtn')) {
+    document.getElementById('copyAllBtn').onclick = function() {
+        const links = [];
+        document.querySelectorAll('.multiple-links a').forEach(link => {
+            links.push(link.href);
+        });
+        
+        if (links.length > 0) {
+            navigator.clipboard.writeText(links.join('\n'));
+            this.textContent = '✔ Copied!';
+            this.style.background = '#4CAF50';
+            setTimeout(() => {
+                this.textContent = '📋 Copy all links';
+                this.style.background = '#5865f2';
+            }, 2000);
+        }
+    };
+}
+
+// Копирование отдельных ссылок
+if (document.querySelectorAll('.copy-btn').length) {
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.onclick = function() {
+            const link = this.getAttribute('data-link');
+            if (link) {
+                navigator.clipboard.writeText(link);
+                this.textContent = '✔';
+                setTimeout(() => {this.textContent='📋';}, 1000);
+            }
+        };
+    });
+}
+</script>
+
+<!-- Drag & Drop индикатор -->
+<div id="dragIndicator" class="drag-indicator">
+    📁 Drop files here
+</div>
+
 </body>
 </html> 
