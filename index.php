@@ -238,6 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            margin-top: 0;
         }
         .support-btn:hover {
             background: #5865f2;
