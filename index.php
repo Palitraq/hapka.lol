@@ -699,7 +699,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
 <div class="header-wrap">
     <div class="header">
         <div class="header-left">
-            <span class="logo"><a href="https://hapka.lol" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;">hapka.lol</a></span>
+            <span class="logo"><a href="https://hapka.lol" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;"><img src="logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
         </div>
         <div class="header-right">
             <a href="https://github.com/Palitraq/hapka.lol" class="header-link">GitHub</a>
@@ -710,10 +710,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
     <div class="header-underline"></div>
 </div>
 <div class="container upload-animation">
+    <h2>Upload files (up to 100 MB each)</h2>
     <div style="text-align:left; margin-bottom:18px;">
         <a href="#" id="terms-link" style="color:#8ab4f8;text-decoration:underline;font-size:1.05em;">Terms and Privacy Policy</a>
     </div>
-    <h2>Upload files (up to 100 MB each)</h2>
     <?php if ($error): ?>
         <div class="error"><?= $error ?></div>
     <?php endif; ?>
