@@ -147,7 +147,7 @@
 <div class="header-wrap">
     <div class="header">
         <div class="header-left">
-            <span class="logo"><a href="https://hapka.lol" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;"><img src="logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
+            <span class="logo"><a href="https://hapka.lol" class="logo-gradient" style="text-decoration:none;"><img src="logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
         </div>
         <div class="header-right">
             <a href="/ShareX.php" class="header-link" style="margin-right:12px;">ShareX</a>
