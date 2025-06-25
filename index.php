@@ -702,6 +702,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
             <span class="logo"><a href="https://hapka.lol" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;"><img src="logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
         </div>
         <div class="header-right">
+            <a href="/ShareX.php" class="header-link" style="margin-right:12px;">ShareX</a>
             <a href="https://github.com/Palitraq/hapka.lol" class="header-link">GitHub</a>
             <span class="nav-dot">&bull;</span>
             <a href="#" class="support-btn">&#10084; Support</a>
