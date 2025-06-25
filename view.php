@@ -55,6 +55,7 @@ if (!$filename || !preg_match('/^[a-zA-Z0-9._+\-]+$/', $filename) || !file_exist
     <html lang="ru">
     <head>
         <meta charset="UTF-8">
+        <link rel="icon" type="image/png" href="/logo.png">
         <title>link not found</title>
         <style>
             body {
@@ -107,6 +108,7 @@ if (isImage($ext)) {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <link rel="icon" type="image/png" href="/logo.png">
         <title>Image</title>
         <style>
             body {
@@ -144,6 +146,7 @@ if (isImage($ext)) {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <link rel="icon" type="image/png" href="/logo.png">
         <title>Video</title>
         <style>
             body {
@@ -184,6 +187,7 @@ if (isImage($ext)) {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <link rel="icon" type="image/png" href="/logo.png">
         <title>Audio</title>
         <style>
             body {

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/logo.png">
   <title>ShareX Integration - hapka.lol</title>
   <style>
     body { background: #181a1b; color: #e3e3e3; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; }
