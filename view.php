@@ -31,21 +31,6 @@ function isAudio($ext) {
     return in_array($ext, ['mp3']);
 }
 
-// Проверка срока хранения
-$metaFile = $uploadDir . $filename . '.meta';
-$expiresIn = '';
-if (file_exists($metaFile)) {
-    $created = (int)file_get_contents($metaFile);
-    $left = $created + $ttl - time();
-    if ($left > 0) {
-        $days = floor($left / 86400);
-        $hours = floor(($left % 86400) / 3600);
-        $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
-    } else {
-        $expiresIn = 'Expired';
-    }
-}
-
 if (!$filename || !preg_match('/^[a-zA-Z0-9._+\-]+$/', $filename) || !file_exists($filepath)) {
     // 404 страница
     http_response_code(404);
@@ -124,16 +109,10 @@ if (isImage($ext)) {
                 background: #23272a;
                 box-shadow: 0 2px 16px #0008;
             }
-            .expires {
-                color: #888;
-                font-size: 1.05em;
-                margin: 18px 0 0 0;
-            }
         </style>
     </head>
     <body>
-        <img src="uploads/<?= htmlspecialchars($filename) ?>" alt="image"><br>
-        <?php if ($expiresIn): ?><div class="expires">Storage: <?= htmlspecialchars($expiresIn) ?></div><?php endif; ?>
+        <img src="uploads/<?= htmlspecialchars($filename) ?>" alt="image">
     </body>
     </html>
     <?php
@@ -162,19 +141,13 @@ if (isImage($ext)) {
                 background: #23272a;
                 box-shadow: 0 2px 16px #0008;
             }
-            .expires {
-                color: #888;
-                font-size: 1.05em;
-                margin: 18px 0 0 0;
-            }
         </style>
     </head>
     <body>
         <video controls>
             <source src="uploads/<?= htmlspecialchars($filename) ?>">
             Your browser does not support the video tag.
-        </video><br>
-        <?php if ($expiresIn): ?><div class="expires">Storage: <?= htmlspecialchars($expiresIn) ?></div><?php endif; ?>
+        </video>
     </body>
     </html>
     <?php
@@ -200,19 +173,13 @@ if (isImage($ext)) {
                 max-width: 600px;
                 margin-top: 40px;
             }
-            .expires {
-                color: #888;
-                font-size: 1.05em;
-                margin: 18px 0 0 0;
-            }
         </style>
     </head>
     <body>
         <audio controls>
             <source src="uploads/<?= htmlspecialchars($filename) ?>" type="audio/mpeg">
             Your browser does not support the audio element.
-        </audio><br>
-        <?php if ($expiresIn): ?><div class="expires">Storage: <?= htmlspecialchars($expiresIn) ?></div><?php endif; ?>
+        </audio>
     </body>
     </html>
     <?php

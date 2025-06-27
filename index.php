@@ -759,7 +759,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
             <?php
             $code = $item['code'];
             $metaFile = $uploadDir . $code . '.meta';
-            $expiresIn = '';
             $createdStr = '';
             $type = '';
             $isImg = false;
@@ -790,14 +789,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
                     }
                     $created = (int)$meta['created'];
                     $createdStr = date('Y-m-d H:i:s', $created) . ' GMT+3';
-                    $left = $created + $ttl - time();
-                    if ($left > 0) {
-                        $days = floor($left / 86400);
-                        $hours = floor(($left % 86400) / 3600);
-                        $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
-                    } else {
-                        $expiresIn = 'Expired';
-                    }
                 }
             }
             $url = htmlspecialchars($code);
@@ -828,7 +819,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
                     <div class="history-meta">
                         <span><?= $createdStr ?></span>
                         <span><?= $type ?></span>
-                        <span><?= $expiresIn ?></span>
                     </div>
                 </div>
             </div>
