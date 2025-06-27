@@ -880,7 +880,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
     <h3>Terms of Service</h3>
     <ul style="margin-bottom:18px;">
       <li>This service allows you to upload and share files up to 100 MB.</li>
-      <li>All files are stored for 30 days and then automatically deleted.</li>
+      <li>All files are stored permanently and never deleted.</li>
       <li>You are solely responsible for the content you upload.</li>
       <li>Do not upload illegal, harmful, or copyrighted content without permission.</li>
       <li>The service is provided "as is" without any warranty.</li>

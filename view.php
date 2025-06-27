@@ -43,7 +43,6 @@ if (file_exists($metaFile)) {
         $expiresIn = ($days > 0 ? $days . 'd ' : '') . $hours . 'h left';
     } else {
         $expiresIn = 'Expired';
-        @unlink($filepath);
     }
 }
 
