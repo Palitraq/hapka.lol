@@ -861,6 +861,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
       <b>TON:</b><br>
       <span style="word-break:break-all;">UQCR0jBsHh8jSKw-hrs2cBehRg0rDdIOeZPOIiMYKoCBtQq9</span>
     </div>
+    <div style="margin-top: 20px; display: flex; justify-content: center;">
+      <div style="
+        display: inline-block;
+        background: #1a162b;
+        color: #b388ff;
+        font-size: 0.98em;
+        font-weight: 500;
+        border-radius: 7px;
+        box-shadow: none;
+        padding: 5px 14px;
+        text-align: center;
+        letter-spacing: 0.01em;
+        line-height: 1.3;
+        user-select: none;
+        opacity: 0.7;
+      ">
+        <span style="font-size:1em; vertical-align:middle;">💜</span> Contributions help pay for hosting.
+      </div>
+    </div>
   </div>
 </div>
 <div id="terms-modal" class="modal" style="display:none;">
