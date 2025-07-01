@@ -877,7 +877,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
         user-select: none;
         opacity: 0.7;
       ">
-        <span style="font-size:1em; vertical-align:middle;">💜</span> Contributions help pay for hosting.
+        <span style="font-size:1em; vertical-align:middle;">💜</span> Donates help pay for hosting.
       </div>
     </div>
   </div>
