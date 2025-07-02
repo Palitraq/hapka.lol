@@ -32,6 +32,13 @@ if ($file['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
+// Проверка размера файла (100 МБ)
+if ($file['size'] > 100 * 1024 * 1024) {
+    http_response_code(400);
+    echo json_encode(['status_code' => 400, 'error' => ['message' => 'File exceeds 100 MB limit']]);
+    exit;
+}
+
 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 $filename = uniqid('img_', true) . '.' . $ext;
 $target = $uploadDir . $filename;
