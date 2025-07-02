@@ -49,6 +49,14 @@ if (!move_uploaded_file($file['tmp_name'], $target)) {
     exit;
 }
 
+// Создаём .meta-файл для статистики
+$metaPath = $uploadDir . pathinfo($filename, PATHINFO_FILENAME) . '.meta';
+file_put_contents($metaPath, json_encode([
+    'orig' => $file['name'],
+    'saved' => $filename,
+    'created' => time()
+]));
+
 $url = 'https://' . $_SERVER['HTTP_HOST'] . '/uploads/' . $filename;
 
 echo json_encode([
