@@ -942,9 +942,7 @@ if (document.querySelectorAll('.copy-btn').length) {
 </script>
 
 <!-- Drag & Drop индикатор -->
-<div id="dragIndicator" class="drag-indicator">
-    📁 Drop files here
-</div>
+<div id="dragIndicator" class="drag-indicator">📁 Drop files here</div>
 
 </body>
 </html> 

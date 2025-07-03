@@ -52,14 +52,15 @@ function showFileTooLarge() {
 }
 
 function showDragIndicator() {
-    dragIndicator.classList.add('show');
+    if (dragIndicator) dragIndicator.classList.add('show');
 }
 
 function hideDragIndicator() {
-    dragIndicator.classList.remove('show');
+    if (dragIndicator) dragIndicator.classList.remove('show');
 }
 
 function uploadMultipleFiles(files) {
+    console.log('uploadMultipleFiles called with:', files);
     const formData = new FormData();
     let totalSize = 0;
     
@@ -222,16 +223,15 @@ document.addEventListener('paste', function (event) {
     }
 });
 
+// Drag&Drop upload
 window.addEventListener('drop', function(e) {
     e.preventDefault();
     document.body.classList.remove('body-dragover');
     hideDragIndicator();
-    
     if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
         const files = Array.from(e.dataTransfer.files);
+        console.log('Dropped files:', files);
         let hasLargeFile = false;
-        
-        // Проверяем размер всех файлов
         for (let i = 0; i < files.length; i++) {
             if (files[i].size > MAX_FILE_SIZE) {
                 showFileTooLarge();
@@ -242,21 +242,16 @@ window.addEventListener('drop', function(e) {
                 return;
             }
         }
-        
         const dt = new DataTransfer();
         files.forEach(file => dt.items.add(file));
         fileInput.files = dt.files;
-        
         let label = document.getElementById('fileLabelText');
         if (files.length === 1) {
             label.textContent = files[0].name;
         } else {
             label.textContent = `${files.length} files selected`;
         }
-        
         preview.innerHTML = '';
-        
-        // Показываем превью для изображений с анимацией
         files.forEach((file, index) => {
             if (file.type.startsWith('image/')) {
                 const img = document.createElement('img');
@@ -271,8 +266,6 @@ window.addEventListener('drop', function(e) {
                 img.style.transform = 'translateY(20px)';
                 img.src = URL.createObjectURL(file);
                 preview.appendChild(img);
-                
-                // Анимация появления с задержкой
                 setTimeout(() => {
                     img.style.transition = 'all 0.3s ease';
                     img.style.opacity = '1';
@@ -280,7 +273,6 @@ window.addEventListener('drop', function(e) {
                 }, index * 100);
             }
         });
-        
         uploadMultipleFiles(files);
     }
 });
