@@ -143,29 +143,17 @@ fileInput.addEventListener('change', function() {
         
         preview.innerHTML = '';
         
-        // Показываем превью для изображений с анимацией
+        // Показываем превью для изображений
         files.forEach((file, index) => {
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                img.className = 'file-preview';
-                img.style.maxWidth = '100px';
-                img.style.maxHeight = '100px';
-                img.style.margin = '5px';
-                img.style.borderRadius = '8px';
-                img.style.border = '1px solid #444';
-                img.style.animationDelay = `${index * 0.1}s`;
-                img.style.opacity = '0';
-                img.style.transform = 'translateY(20px)';
-                img.src = URL.createObjectURL(file);
-                preview.appendChild(img);
-                
-                // Анимация появления с задержкой
-                setTimeout(() => {
-                    img.style.transition = 'all 0.3s ease';
-                    img.style.opacity = '1';
-                    img.style.transform = 'translateY(0)';
-                }, index * 100);
-            }
+            const img = document.createElement('img');
+            img.className = 'file-preview';
+            img.style.maxWidth = '100px';
+            img.style.maxHeight = '100px';
+            img.style.margin = '5px';
+            img.style.borderRadius = '8px';
+            img.style.border = '1px solid #444';
+            img.src = URL.createObjectURL(file);
+            preview.appendChild(img);
         });
         
         uploadMultipleFiles(files);
@@ -205,18 +193,8 @@ document.addEventListener('paste', function (event) {
             img.style.margin = '5px';
             img.style.borderRadius = '8px';
             img.style.border = '1px solid #444';
-            img.style.animationDelay = `${index * 0.1}s`;
-            img.style.opacity = '0';
-            img.style.transform = 'translateY(20px)';
             img.src = URL.createObjectURL(file);
             preview.appendChild(img);
-            
-            // Анимация появления с задержкой
-            setTimeout(() => {
-                img.style.transition = 'all 0.3s ease';
-                img.style.opacity = '1';
-                img.style.transform = 'translateY(0)';
-            }, index * 100);
         });
         
         uploadMultipleFiles(files);
@@ -253,25 +231,15 @@ window.addEventListener('drop', function(e) {
         }
         preview.innerHTML = '';
         files.forEach((file, index) => {
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                img.className = 'file-preview';
-                img.style.maxWidth = '100px';
-                img.style.maxHeight = '100px';
-                img.style.margin = '5px';
-                img.style.borderRadius = '8px';
-                img.style.border = '1px solid #444';
-                img.style.animationDelay = `${index * 0.1}s`;
-                img.style.opacity = '0';
-                img.style.transform = 'translateY(20px)';
-                img.src = URL.createObjectURL(file);
-                preview.appendChild(img);
-                setTimeout(() => {
-                    img.style.transition = 'all 0.3s ease';
-                    img.style.opacity = '1';
-                    img.style.transform = 'translateY(0)';
-                }, index * 100);
-            }
+            const img = document.createElement('img');
+            img.className = 'file-preview';
+            img.style.maxWidth = '100px';
+            img.style.maxHeight = '100px';
+            img.style.margin = '5px';
+            img.style.borderRadius = '8px';
+            img.style.border = '1px solid #444';
+            img.src = URL.createObjectURL(file);
+            preview.appendChild(img);
         });
         uploadMultipleFiles(files);
     }

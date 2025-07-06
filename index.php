@@ -386,87 +386,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
             outline: 3px dashed #5865f2 !important;
             outline-offset: -8px;
             background: #202225 !important;
-            animation: pulse 1.5s ease-in-out infinite alternate;
-        }
-        
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.4);
-                transform: scale(1);
-            }
-            100% {
-                box-shadow: 0 0 0 20px rgba(88, 101, 242, 0);
-                transform: scale(1.02);
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% {
-                transform: translate3d(0,0,0);
-            }
-            40%, 43% {
-                transform: translate3d(0, -8px, 0);
-            }
-            70% {
-                transform: translate3d(0, -4px, 0);
-            }
-            90% {
-                transform: translate3d(0, -2px, 0);
-            }
-        }
-        
-        @keyframes progressGlow {
-            0% {
-                box-shadow: 0 0 5px rgba(88, 101, 242, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 20px rgba(88, 101, 242, 0.8);
-            }
-            100% {
-                box-shadow: 0 0 5px rgba(88, 101, 242, 0.5);
-            }
-        }
-        
-        .upload-animation {
-            animation: fadeInUp 0.6s ease-out;
-        }
-        
-        .link-animation {
-            animation: slideInRight 0.5s ease-out;
         }
         
         .history-card {
-            animation: fadeInUp 0.4s ease-out;
         }
         
         .copy-btn:hover {
-            animation: bounce 0.6s ease-in-out;
-        }
-        
-        .progress-glow {
-            animation: progressGlow 2s ease-in-out infinite;
         }
         
         .file-preview {
@@ -501,7 +426,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
         }
         
         .upload-success {
-            animation: bounce 0.8s ease-in-out;
         }
         @media (max-width: 700px) {
             .header-wrap, .header, .header-underline, .container {
@@ -712,7 +636,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
     </div>
     <div class="header-underline"></div>
 </div>
-<div class="container upload-animation">
+<div class="container">
     <h2>Upload files (up to 100 MB each)</h2>
     <div style="text-align:left; margin-bottom:18px;">
         <a href="#" id="terms-link" style="color:#8ab4f8;text-decoration:underline;font-size:1.05em;">Terms and Privacy Policy</a>
@@ -729,7 +653,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
     <div id="preview"></div>
     
     <?php if ($link): ?>
-        <div class="link link-animation">
+        <div class="link">
             <?php 
             $links = explode(',', $link);
             if (count($links) === 1): ?>
