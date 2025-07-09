@@ -34,54 +34,7 @@ function isAudio($ext) {
 if (!$filename || !preg_match('/^[a-zA-Z0-9._+\-]+$/', $filename) || !file_exists($filepath)) {
     // 404 страница
     http_response_code(404);
-    ?>
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="/logo.png">
-        <title>link not found</title>
-        <style>
-            body {
-                background: #181a1b;
-                color: #fff;
-                min-height: 100vh;
-                margin: 0;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-            .notfound {
-                font-size: 2.2rem;
-                font-weight: 700;
-                margin-bottom: 32px;
-                text-align: center;
-            }
-            .home-btn {
-                background: linear-gradient(90deg, #8f5cff 0%, #5865f2 100%);
-                color: #fff;
-                border: none;
-                border-radius: 8px;
-                padding: 12px 36px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                cursor: pointer;
-                text-decoration: none;
-                transition: background 0.2s, box-shadow 0.2s;
-                box-shadow: 0 2px 12px #0006;
-            }
-            .home-btn:hover {
-                background: linear-gradient(90deg, #5865f2 0%, #8f5cff 100%);
-            }
-        </style>
-    </head>
-    <body>
-        <div class="notfound">link not found</div>
-        <a href="https://hapka.lol" class="home-btn">Home</a>
-    </body>
-    </html>
-    <?php
+    include __DIR__ . '/404.php';
     exit;
 }
 

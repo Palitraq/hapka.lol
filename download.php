@@ -3,24 +3,28 @@ $uploadDir = __DIR__ . '/uploads/';
 $code = isset($_GET['code']) ? preg_replace('/[^a-zA-Z]/', '', $_GET['code']) : '';
 if (!$code || strlen($code) !== 5) {
     http_response_code(404);
-    exit('Not found');
+    include __DIR__ . '/404.php';
+    exit;
 }
 $metaPath = $uploadDir . $code . '.meta';
 if (!file_exists($metaPath)) {
     http_response_code(404);
-    exit('Not found');
+    include __DIR__ . '/404.php';
+    exit;
 }
 $meta = @json_decode(@file_get_contents($metaPath), true);
 if (!$meta || !isset($meta['orig'])) {
     http_response_code(404);
-    exit('Not found');
+    include __DIR__ . '/404.php';
+    exit;
 }
 $origName = $meta['orig'];
 $savedName = isset($meta['saved']) ? $meta['saved'] : $origName;
 $filePath = $uploadDir . $savedName;
 if (!file_exists($filePath)) {
     http_response_code(404);
-    exit('Not found');
+    include __DIR__ . '/404.php';
+    exit;
 }
 $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
 $mime = 'application/octet-stream';
@@ -33,7 +37,8 @@ if (in_array($ext, ['jpg','jpeg','png','gif','webp'])) {
 }
 if ($ext === 'avif') {
     http_response_code(404);
-    exit('Not found');
+    include __DIR__ . '/404.php';
+    exit;
 }
 // Для изображений, видео, mp3 — inline, для остальных — attachment
 $disposition = (strpos($mime, 'image/') === 0 || strpos($mime, 'video/') === 0 || strpos($mime, 'audio/') === 0)

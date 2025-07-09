@@ -64,7 +64,13 @@ if (isset($_GET['del_history'])) {
 
 $link = '';
 if (isset($_GET['link'])) {
-    $link = htmlspecialchars($_GET['link']);
+    $code = basename($_GET['link']);
+    $metaPath = $uploadDir . $code . '.meta';
+    if (!file_exists($metaPath)) {
+        http_response_code(404);
+        include __DIR__ . '/404.php';
+        exit;
+    }
 }
 $error = '';
 $uploadedFiles = [];
@@ -137,6 +143,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
         }
         exit;
     }
+}
+// Проверка на несуществующий путь (чтобы показывать 404 для любых левых адресов)
+$requestUri = $_SERVER['REQUEST_URI'];
+$path = parse_url($requestUri, PHP_URL_PATH);
+if ($path !== '/' && !isset($_GET['link'])) {
+    http_response_code(404);
+    include __DIR__ . '/404.php';
+    exit;
 }
 ?>
 <!DOCTYPE html>
