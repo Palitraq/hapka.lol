@@ -528,8 +528,151 @@ $memoryPeak = memory_get_peak_usage(true);
                 <div class="stat-label">Total Size (MB)</div>
             </div>
         </div>
-        
-        <div class="progress-section">
+
+<?php
+// === График активности загрузки файлов (GitHub-style) ===
+$metaFiles = glob($uploadDir . '*.meta');
+$activity = [];
+$now = time();
+$start = strtotime('-1 year', strtotime(date('Y-m-d', $now)));
+for ($d = $start; $d <= $now; $d += 86400) {
+    $activity[date('Y-m-d', $d)] = 0;
+}
+foreach ($metaFiles as $meta) {
+    $metaData = @json_decode(@file_get_contents($meta), true);
+    if ($metaData && isset($metaData['created'])) {
+        $day = date('Y-m-d', $metaData['created']);
+        if (isset($activity[$day])) $activity[$day]++;
+    }
+}
+// Преобразуем в недели для сетки
+$weeks = [];
+$days = array_keys($activity);
+$firstDay = strtotime($days[0]);
+$firstWeekDay = date('N', $firstDay); // 1=Mon, 7=Sun
+$week = [];
+$dayIdx = 0;
+// Добавить пустые ячейки, если год назад был не понедельник
+if ($firstWeekDay > 1) {
+    for ($i = 1; $i < $firstWeekDay; $i++) {
+        $week[] = ['count' => 0, 'date' => ''];
+        $dayIdx++;
+    }
+}
+foreach ($activity as $day => $count) {
+    $week[] = ['count' => $count, 'date' => $day];
+    $dayIdx++;
+    if ($dayIdx % 7 === 0) {
+        $weeks[] = $week;
+        $week = [];
+    }
+}
+if (count($week)) $weeks[] = $week;
+// Цвета (можно настроить)
+function activityColor($count) {
+    if ($count == 0) return '#2d3140'; // Было #23272a, теперь светлее
+    if ($count == 1) return '#8f5cff22';
+    if ($count <= 3) return '#8f5cff55';
+    if ($count <= 7) return '#8f5cffaa';
+    return '#8f5cff';
+}
+// Считаем, в какой неделе начинается каждый месяц
+$monthLabels = [];
+$prevMonth = null;
+foreach ($weeks as $wIdx => $week) {
+    foreach ($week as $cell) {
+        if (!empty($cell['date'])) {
+            $month = date('M', strtotime($cell['date']));
+            if ($month !== $prevMonth) {
+                $monthLabels[$wIdx] = $month;
+                $prevMonth = $month;
+            }
+            break;
+        }
+    }
+}
+?>
+<div style="margin: 48px auto 0 auto; max-width: 900px; width:100%; text-align:center;">
+    <div style="font-weight:600; color:#b9bbbe; margin-bottom:10px; font-size:1.1em;">File upload activity (last 12 months)</div>
+    <div class="activity-graph" style="background:rgba(40,40,60,0.8); border-radius:15px; border:1px solid rgba(255,255,255,0.1); padding:25px; margin-bottom:30px; width:100%;">
+        <div style="display:flex; gap:2px; justify-content:center; align-items:flex-start;">
+            <?php foreach ($weeks as $w): ?>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    <?php for ($i=0; $i<7; $i++): ?>
+                        <?php
+                        $cell = isset($w[$i]) ? $w[$i] : ['count'=>0,'date'=>''];
+                        $c = $cell['count'];
+                        $d = $cell['date'];
+                        ?>
+                        <div class="activity-cell" data-tooltip="<?= htmlspecialchars($d) ?>: <?= $c ?> upload<?= $c==1?'':'s' ?>" style="width:13px;height:13px;border-radius:3px;background:<?= activityColor($c) ?>;"></div>
+                    <?php endfor; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php
+// Найти день с максимальной активностью
+$peakDate = '';
+$peakCount = 0;
+foreach ($activity as $date => $count) {
+    if ($count > $peakCount) {
+        $peakCount = $count;
+        $peakDate = $date;
+    }
+}
+?>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; margin-right: 8px; font-size: 15px; color: #888;">
+        <span style="color:#bbb; font-size:14px;">
+            <?php if ($peakCount > 0): ?>
+                Peak: <?= htmlspecialchars($peakDate) ?> (<?= $peakCount ?> upload<?= $peakCount==1?'':'s' ?>)
+            <?php else: ?>
+                Peak: —
+            <?php endif; ?>
+        </span>
+        <span style="display: flex; align-items: center; gap: 8px;">
+            <span>Less</span>
+            <span style="display: flex; gap: 4px; align-items: center; margin: 0 2px;">
+                <span style="width: 16px; height: 16px; border-radius: 3px; background: #23272a; display: inline-block;"></span>
+                <span style="width: 16px; height: 16px; border-radius: 3px; background: #8f5cff22; display: inline-block;"></span>
+                <span style="width: 16px; height: 16px; border-radius: 3px; background: #8f5cff55; display: inline-block;"></span>
+                <span style="width: 16px; height: 16px; border-radius: 3px; background: #8f5cffaa; display: inline-block;"></span>
+                <span style="width: 16px; height: 16px; border-radius: 3px; background: #8f5cff; display: inline-block;"></span>
+            </span>
+            <span>More</span>
+        </span>
+    </div>
+</div>
+<style>
+.activity-cell {
+    position: relative;
+    cursor: pointer;
+}
+.activity-cell:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    top: -32px;
+    transform: translateX(-50%);
+    background: #23272a;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 0.98em;
+    white-space: nowrap;
+    box-shadow: 0 2px 12px #0008;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 1;
+}
+.activity-cell::after {
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.activity-cell:hover::after {
+    opacity: 1;
+}
+</style>
+        <div class="progress-section" style="margin-top:32px;">
             <div class="progress-title">Storage Usage</div>
             <div class="progress-bar">
                 <div class="progress-fill" style="width: <?= $storageUsage ?>%"></div>
@@ -538,7 +681,7 @@ $memoryPeak = memory_get_peak_usage(true);
                 <?= number_format($storageUsage, 1) ?>% used (<?= number_format($totalSize / 1024 / 1024, 1) ?> MB / 13 GB)
             </div>
         </div>
-        
+
         <div class="server-info">
             <div class="info-card">
                 <div class="info-title">Server Load</div>
