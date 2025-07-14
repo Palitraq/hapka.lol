@@ -51,6 +51,9 @@ if (isset($_GET['del_history'])) {
                     $fileToDelete = isset($meta['saved']) ? $meta['saved'] : $meta['orig'];
                     $filePath = $uploadDir . $fileToDelete;
                     if (file_exists($filePath)) unlink($filePath);
+                    // Удаляем файл просмотров, если есть
+                    $viewsPath = $filePath . '.views';
+                    if (file_exists($viewsPath)) unlink($viewsPath);
                 }
                 // Удаляем .meta файл
                 unlink($metaPath);

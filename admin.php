@@ -209,7 +209,9 @@ $allFiles = glob($uploadDir . '*');
 $currentFiles = 0;
 $totalSize = 0;
 foreach ($allFiles as $file) {
-    if (is_file($file) && substr($file, -5) !== '.meta') {
+    // Считаем только если файл не .meta и не .views (или похожее)
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    if (is_file($file) && $ext !== 'meta' && $ext !== 'views') {
         $currentFiles++;
         $totalSize += filesize($file);
     }
