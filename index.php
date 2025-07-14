@@ -61,7 +61,7 @@ if (isset($_GET['del_history'])) {
         }
         array_splice($_SESSION['history'], $i, 1);
     }
-    header('Location: index.php');
+    header('Location: /');
     exit;
 }
 
