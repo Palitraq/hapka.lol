@@ -104,8 +104,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
                     $target = $uploadDir . $randomName;
                 } while (file_exists($target));
             } else {
+                // Новый блок: уникализация имени для дубликатов
+                $baseName = pathinfo($origName, PATHINFO_FILENAME);
+                $extension = pathinfo($origName, PATHINFO_EXTENSION);
                 $randomName = $origName;
                 $target = $uploadDir . $randomName;
+                $counter = 1;
+                while (file_exists($target)) {
+                    $randomName = $baseName . '_' . $counter . '.' . $extension;
+                    $target = $uploadDir . $randomName;
+                    $counter++;
+                }
             }
             
             if (move_uploaded_file($files['tmp_name'][$i], $target)) {

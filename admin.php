@@ -530,7 +530,7 @@ $memoryPeak = memory_get_peak_usage(true);
                 <div class="stat-label">Total Size (MB)</div>
             </div>
         </div>
-
+        
 <?php
 // === График активности загрузки файлов (GitHub-style) ===
 $metaFiles = glob($uploadDir . '*.meta');
@@ -683,7 +683,7 @@ foreach ($activity as $date => $count) {
                 <?= number_format($storageUsage, 1) ?>% used (<?= number_format($totalSize / 1024 / 1024, 1) ?> MB / 13 GB)
             </div>
         </div>
-
+        
         <div class="server-info">
             <div class="info-card">
                 <div class="info-title">Server Load</div>
