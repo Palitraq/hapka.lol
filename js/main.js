@@ -287,7 +287,11 @@ window.addEventListener('dragleave', function(e) {
 if (document.querySelectorAll('.copy-btn').length) {
     document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.onclick = function() {
-            const link = btn.getAttribute('data-link') || btn.parentElement.querySelector('.history-link').value;
+            let link = btn.getAttribute('data-link') || btn.parentElement.querySelector('.history-link').value;
+            // Если link — только 5 символов (код), формируем полный URL
+            if (/^[a-zA-Z0-9]{5}$/.test(link)) {
+                link = window.location.origin + '/' + link;
+            }
             navigator.clipboard.writeText(link);
             btn.textContent = '✔';
             setTimeout(()=>{btn.textContent='📋';}, 1000);

@@ -847,41 +847,6 @@ if ($path !== '/' && !isset($_GET['link'])) {
   </div>
 </div>
 <script src="js/main.js"></script>
-<script>
-// Копирование всех ссылок
-if (document.getElementById('copyAllBtn')) {
-    document.getElementById('copyAllBtn').onclick = function() {
-        const links = [];
-        document.querySelectorAll('.multiple-links a').forEach(link => {
-            links.push(link.href);
-        });
-        
-        if (links.length > 0) {
-            navigator.clipboard.writeText(links.join('\n'));
-            this.textContent = '✔ Copied!';
-            this.style.background = '#4CAF50';
-            setTimeout(() => {
-                this.textContent = '📋 Copy all links';
-                this.style.background = '#5865f2';
-            }, 2000);
-        }
-    };
-}
-
-// Копирование отдельных ссылок
-if (document.querySelectorAll('.copy-btn').length) {
-    document.querySelectorAll('.copy-btn').forEach(btn => {
-        btn.onclick = function() {
-            const link = this.getAttribute('data-link');
-            if (link) {
-                navigator.clipboard.writeText(link);
-                this.textContent = '✔';
-                setTimeout(() => {this.textContent='📋';}, 1000);
-            }
-        };
-    });
-}
-</script>
 
 <!-- Drag & Drop индикатор -->
 <div id="dragIndicator" class="drag-indicator">📁 Drop files here</div>
