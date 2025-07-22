@@ -39,9 +39,23 @@ if ($file['size'] > 100 * 1024 * 1024) {
     exit;
 }
 
+function randomString($length = 6) {
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $str = '';
+    for ($i = 0; $i < $length; $i++) {
+        $str .= $chars[random_int(0, strlen($chars) - 1)];
+    }
+    return $str;
+}
+
 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-$filename = uniqid('img_', true) . '.' . $ext;
-$target = $uploadDir . $filename;
+
+do {
+    $short = randomString(6);
+    $metaPath = $uploadDir . $short . '.meta';
+    $target = $uploadDir . $file['name'];
+    $savedName = $file['name'];
+} while (file_exists($metaPath) || file_exists($target));
 
 if (!move_uploaded_file($file['tmp_name'], $target)) {
     http_response_code(500);
@@ -50,20 +64,18 @@ if (!move_uploaded_file($file['tmp_name'], $target)) {
 }
 
 // Создаём .meta-файл для статистики
-$metaPath = $uploadDir . pathinfo($filename, PATHINFO_FILENAME) . '.meta';
 file_put_contents($metaPath, json_encode([
     'orig' => $file['name'],
-    'saved' => $filename,
+    'saved' => $savedName,
     'created' => time()
 ]));
 
-$url = 'https://' . $_SERVER['HTTP_HOST'] . '/uploads/' . $filename;
+$url = 'https://' . $_SERVER['HTTP_HOST'] . '/' . $short;
 
 echo json_encode([
     'status_code' => 200,
     'success' => [
-        'image' => [
-            'url' => $url
-        ]
+        'short' => $short,
+        'url' => $url
     ]
 ]); 

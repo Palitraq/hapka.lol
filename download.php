@@ -1,7 +1,7 @@
 <?php
 $uploadDir = __DIR__ . '/uploads/';
 $code = isset($_GET['code']) ? preg_replace('/[^a-zA-Z]/', '', $_GET['code']) : '';
-if (!$code || strlen($code) !== 5) {
+if (!$code || (strlen($code) !== 5 && strlen($code) !== 6)) {
     http_response_code(404);
     include __DIR__ . '/404.php';
     exit;
