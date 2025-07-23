@@ -5,8 +5,8 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Короткие ссылки: 5 или 6 латинских символов
-RewriteRule ^([a-zA-Z]{5,6})$ download.php?code=$1 [L,QSA]
+# Все короткие ссылки (5 или 6 латинских символов) — только на view.php (предпросмотр и счётчик)
+RewriteRule ^([a-zA-Z]{5,6})$ view.php?code=$1 [L,QSA]
 
 # Админка
 RewriteRule ^admin$ admin.php [L] 
