@@ -48,6 +48,11 @@ function randomString($length = 6) {
     return $str;
 }
 
+function sanitizeFileName($name) {
+    $name = str_replace(' ', '_', $name);
+    return $name;
+}
+
 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
 // Блокируем опасные расширения
@@ -58,11 +63,13 @@ if (in_array($ext, $forbidden)) {
     exit;
 }
 
+$cleanName = sanitizeFileName($file['name']);
+
 do {
     $short = randomString(6);
     $metaPath = $uploadDir . $short . '.meta';
-    $target = $uploadDir . $file['name'];
-    $savedName = $file['name'];
+    $target = $uploadDir . $cleanName;
+    $savedName = $cleanName;
 } while (file_exists($metaPath) || file_exists($target));
 
 if (!move_uploaded_file($file['tmp_name'], $target)) {

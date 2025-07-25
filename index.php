@@ -30,6 +30,10 @@ function randomString($length = 5) {
     }
     return $str;
 }
+function sanitizeFileName($name) {
+    $name = str_replace(' ', '_', $name);
+    return $name;
+}
 
 // Обработка очистки истории
 if (isset($_GET['clear_history'])) {
@@ -91,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
             break;
         } else {
             $origName = $files['name'][$i];
+            $cleanName = sanitizeFileName($origName);
             $ext = getExtension($origName);
             // Блокируем опасные расширения
             $forbidden = ['php','php3','php4','php5','phtml','phar','exe','js','html','htm','shtml','pl','py','cgi','asp','aspx','jsp','sh','bat','cmd','dll','vbs','wsf','jar','scr','msi','com','cpl','rb','ini','htaccess'];
@@ -111,9 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
                 } while (file_exists($target));
             } else {
                 // Новый блок: уникализация имени для дубликатов
-                $baseName = pathinfo($origName, PATHINFO_FILENAME);
-                $extension = pathinfo($origName, PATHINFO_EXTENSION);
-                $randomName = $origName;
+                $baseName = pathinfo($cleanName, PATHINFO_FILENAME);
+                $extension = pathinfo($cleanName, PATHINFO_EXTENSION);
+                $randomName = $cleanName;
                 $target = $uploadDir . $randomName;
                 $counter = 1;
                 while (file_exists($target)) {
@@ -122,6 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
                     $counter++;
                 }
             }
+            // Гарантируем отсутствие пробелов
+            $randomName = str_replace(' ', '_', $randomName);
+            $target = str_replace(' ', '_', $target);
             
             if (move_uploaded_file($files['tmp_name'][$i], $target)) {
                 // Сохраняем метаинформацию
