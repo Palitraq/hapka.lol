@@ -50,6 +50,14 @@ function randomString($length = 6) {
 
 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
+// Блокируем опасные расширения
+$forbidden = ['php','php3','php4','php5','phtml','phar','exe','js','html','htm','shtml','pl','py','cgi','asp','aspx','jsp','sh','bat','cmd','dll','vbs','wsf','jar','scr','msi','com','cpl','rb','ini','htaccess'];
+if (in_array($ext, $forbidden)) {
+    http_response_code(400);
+    echo json_encode(['status_code' => 400, 'error' => ['message' => 'File type not allowed']]);
+    exit;
+}
+
 do {
     $short = randomString(6);
     $metaPath = $uploadDir . $short . '.meta';

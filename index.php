@@ -92,6 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
         } else {
             $origName = $files['name'][$i];
             $ext = getExtension($origName);
+            // Блокируем опасные расширения
+            $forbidden = ['php','php3','php4','php5','phtml','phar','exe','js','html','htm','shtml','pl','py','cgi','asp','aspx','jsp','sh','bat','cmd','dll','vbs','wsf','jar','scr','msi','com','cpl','rb','ini','htaccess'];
+            if (in_array($ext, $forbidden)) {
+                $error = 'File type not allowed.';
+                break;
+            }
             do {
                 $short = randomString(5);
                 $metaPath = $uploadDir . $short . '.meta';
