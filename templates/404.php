@@ -6,7 +6,7 @@ http_response_code(404);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>404 Not Found — hapka.lol</title>
-    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="icon" type="image/png" href="static/logo.png">
     <style>
         body {
             background: #181a1b;
@@ -73,7 +73,7 @@ http_response_code(404);
     </style>
 </head>
 <body>
-    <div class="logo"><a href="/" style="text-decoration:none; color:inherit; display:inline-flex; align-items:center;"><img src="/logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></div>
+    <div class="logo"><a href="/" style="text-decoration:none; color:inherit; display:inline-flex; align-items:center;"><img src="static/logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></div>
     <div class="error-block">
         <div class="error-code">404</div>
         <div class="error-title">Page not found</div>

@@ -1,0 +1,12 @@
+﻿{
+  "Version": "17.1.0",
+  "DestinationType": "ImageUploader, FileUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "https://hapka.lol/api/1/upload.php",
+  "Body": "MultipartFormData",
+  "Arguments": {
+    "key": "dac5f11c-728d-402c-86ea-0d7d84d3e372"
+  },
+  "FileFormName": "source",
+  "URL": "{json:success.url}"
+}

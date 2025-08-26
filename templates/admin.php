@@ -59,7 +59,7 @@ if (empty($_SESSION['is_admin'])) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" type="image/png" href="/logo.png">
+        <link rel="icon" type="image/png" href="/static/logo.png">
         <title>Admin Panel — hapka.lol</title>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -82,7 +82,7 @@ if (empty($_SESSION['is_admin'])) {
     </head>
     <body>
         <div class="login-container">
-            <div class="logo"><img src="/logo.png" alt="logo" style="height:38px;vertical-align:middle;margin-right:12px;">hapka.lol</div>
+            <div class="logo"><img src="/static/logo.png" alt="logo" style="height:38px;vertical-align:middle;margin-right:12px;">hapka.lol</div>
             <div class="subtitle">Admin Panel</div>
             <?php if (!empty($error)): ?>
                 <div class="error"><?= $error ?></div>
@@ -152,7 +152,7 @@ $memoryPeak = memory_get_peak_usage(true);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="icon" type="image/png" href="/static/logo.png">
     <title>Admin Panel — hapka.lol</title>
     <style>
         * {
@@ -369,7 +369,7 @@ $memoryPeak = memory_get_peak_usage(true);
 <body>
     <div class="admin-container">
         <div class="header">
-            <div class="logo"><img src="logo.png" alt="logo" style="height:38px;vertical-align:middle;margin-right:12px;">hapka.lol</div>
+            <div class="logo"><img src="/static/logo.png" alt="logo" style="height:38px;vertical-align:middle;margin-right:12px;">hapka.lol</div>
             <div class="subtitle">Administration Dashboard</div>
             <div class="nav-buttons">
                 <a href="https://hapka.lol" target="_blank" class="nav-btn">

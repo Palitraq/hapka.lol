@@ -185,7 +185,7 @@ if ($path !== '/' && !isset($_GET['link'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="hapka.lol — fast and anonymous file sharing. Upload and share files up to 100 MB, no registration. Free!">
-    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="icon" type="image/png" href="/static/logo.png">
     <title>File upload — hapka.lol</title>
     <style>
         body {
@@ -666,7 +666,7 @@ if ($path !== '/' && !isset($_GET['link'])) {
 <div class="header-wrap">
     <div class="header">
         <div class="header-left">
-            <span class="logo"><a href="https://hapka.lol" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;"><img src="logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
+            <span class="logo"><a href="https://hapka.lol" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;"><img src="/static/logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
         </div>
         <div class="header-right">
             <a href="/ShareX.php" class="header-link" style="margin-right:12px;">ShareX</a>

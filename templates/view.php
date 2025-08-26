@@ -59,7 +59,7 @@ if (isImage($ext)) {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="/logo.png">
+        <link rel="icon" type="image/png" href="/static/logo.png">
         <title>Image</title>
         <style>
             body {
@@ -111,7 +111,7 @@ if (isImage($ext)) {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="/logo.png">
+        <link rel="icon" type="image/png" href="/static/logo.png">
         <title>Video</title>
         <style>
             body {
@@ -152,7 +152,7 @@ if (isImage($ext)) {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="/logo.png">
+        <link rel="icon" type="image/png" href="/static/logo.png">
         <title>Audio</title>
         <style>
             body { text-align: center; margin: 40px; font-family: Arial, sans-serif; background: #181a1b; }
