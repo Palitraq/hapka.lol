@@ -1,18 +1,37 @@
 <?php
 session_start();
-// Load password from .env
+// Load password from root .env (robust search)
 function getEnvVar($key) {
-    $lines = @file(__DIR__ . '/.env');
-    if (!$lines) return null;
-    foreach ($lines as $line) {
-        $line = trim($line);
-        if ($line === '' || $line[0] === '#') continue;
-        if (strpos($line, '=') !== false) {
-            list($k, $v) = explode('=', $line, 2);
-            if (trim($k) === $key) return trim($v);
+    $paths = [
+        dirname(__DIR__) . '/.env',
+        (isset($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') : '') . '/.env',
+        __DIR__ . '/.env',
+    ];
+    foreach ($paths as $path) {
+        if ($path && file_exists($path)) {
+            $lines = @file($path);
+            if ($lines) {
+                foreach ($lines as $line) {
+                    $line = trim($line);
+                    if ($line === '' || $line[0] === '#') continue;
+                    if (strpos($line, '=') !== false) {
+                        list($k, $v) = explode('=', $line, 2);
+                        if (trim($k) === $key) {
+                            $v = trim($v);
+                            // remove optional wrapping quotes
+                            if ((substr($v, 0, 1) === '"' && substr($v, -1) === '"') || (substr($v, 0, 1) === "'" && substr($v, -1) === "'")) {
+                                $v = substr($v, 1, -1);
+                            }
+                            return $v;
+                        }
+                    }
+                }
+            }
         }
     }
-    return null;
+    // Fallback to server env
+    $env = getenv($key);
+    return $env !== false ? $env : null;
 }
 $adminPassword = getEnvVar('ADMIN_PASSWORD');
 if (!$adminPassword) {
@@ -22,7 +41,7 @@ if (!$adminPassword) {
 if (isset($_POST['password'])) {
     if ($_POST['password'] === $adminPassword) {
         $_SESSION['is_admin'] = true;
-        header('Location: admin.php');
+        header('Location: /admin.php');
         exit;
     } else {
         $error = 'Incorrect password';
@@ -30,7 +49,7 @@ if (isset($_POST['password'])) {
 }
 if (isset($_GET['logout'])) {
     unset($_SESSION['is_admin']);
-    header('Location: admin.php');
+    header('Location: /admin.php');
     exit;
 }
 if (empty($_SESSION['is_admin'])) {
@@ -43,148 +62,31 @@ if (empty($_SESSION['is_admin'])) {
         <link rel="icon" type="image/png" href="/logo.png">
         <title>Admin Panel — hapka.lol</title>
         <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            body {
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #e0e0e0;
-            }
-            
-            .login-container {
-                background: rgba(30, 30, 50, 0.95);
-                backdrop-filter: blur(10px);
-                border-radius: 20px;
-                padding: 40px;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-                width: 100%;
-                max-width: 400px;
-                text-align: center;
-                animation: slideInUp 0.6s ease-out;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            @keyframes slideInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            
-            .logo {
-                font-size: 2.5rem;
-                font-weight: 700;
-                margin-bottom: 10px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-            
-            .subtitle {
-                color: #b0b0b0;
-                margin-bottom: 30px;
-                font-size: 1.1rem;
-            }
-            
-            .form-group {
-                margin-bottom: 20px;
-                text-align: left;
-            }
-            
-            .form-group label {
-                display: block;
-                margin-bottom: 8px;
-                color: #d0d0d0;
-                font-weight: 500;
-            }
-            
-            .form-group input {
-                width: 100%;
-                padding: 15px;
-                border: 2px solid #404060;
-                border-radius: 10px;
-                font-size: 1rem;
-                transition: all 0.3s ease;
-                background: #2a2a3a;
-                color: #e0e0e0;
-            }
-            
-            .form-group input:focus {
-                outline: none;
-                border-color: #667eea;
-                background: #303040;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-            }
-            
-            .form-group input::placeholder {
-                color: #808080;
-            }
-            
-            .login-btn {
-                width: 100%;
-                padding: 15px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                border-radius: 10px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                margin-top: 10px;
-            }
-            
-            .login-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-            }
-            
-            .login-btn:active {
-                transform: translateY(0);
-            }
-            
-            .error {
-                background: #ff6b6b;
-                color: white;
-                padding: 12px;
-                border-radius: 8px;
-                margin-bottom: 20px;
-                font-size: 0.9rem;
-            }
-            
-            .security-note {
-                margin-top: 20px;
-                padding: 15px;
-                background: rgba(25, 118, 210, 0.2);
-                border-radius: 8px;
-                font-size: 0.85rem;
-                color: #90caf9;
-                border-left: 4px solid #2196f3;
-            }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; color: #e0e0e0; }
+            .login-container { background: rgba(30, 30, 50, 0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); width: 100%; max-width: 400px; text-align: center; animation: slideInUp 0.6s ease-out; border: 1px solid rgba(255, 255, 255, 0.1); }
+            @keyframes slideInUp { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: translateY(0);} }
+            .logo { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+            .subtitle { color: #b0b0b0; margin-bottom: 30px; font-size: 1.1rem; }
+            .form-group { margin-bottom: 20px; text-align: left; }
+            .form-group label { display: block; margin-bottom: 8px; color: #d0d0d0; font-weight: 500; }
+            .form-group input { width: 100%; padding: 15px; border: 2px solid #404060; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; background: #2a2a3a; color: #e0e0e0; }
+            .form-group input:focus { outline: none; border-color: #667eea; background: #303040; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); }
+            .form-group input::placeholder { color: #808080; }
+            .login-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; }
+            .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+            .login-btn:active { transform: translateY(0); }
+            .error { background: #ff6b6b; color: white; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
+            .security-note { margin-top: 20px; padding: 15px; background: rgba(25, 118, 210, 0.2); border-radius: 8px; font-size: 0.85rem; color: #90caf9; border-left: 4px solid #2196f3; }
         </style>
     </head>
     <body>
         <div class="login-container">
-            <div class="logo"><img src="logo.png" alt="logo" style="height:38px;vertical-align:middle;margin-right:12px;">hapka.lol</div>
+            <div class="logo"><img src="/logo.png" alt="logo" style="height:38px;vertical-align:middle;margin-right:12px;">hapka.lol</div>
             <div class="subtitle">Admin Panel</div>
-            
             <?php if (!empty($error)): ?>
                 <div class="error"><?= $error ?></div>
             <?php endif; ?>
-            
             <form method="post">
                 <div class="form-group">
                     <label for="password">Password</label>
@@ -192,7 +94,6 @@ if (empty($_SESSION['is_admin'])) {
                 </div>
                 <button type="submit" class="login-btn">🔐 Login</button>
             </form>
-            
             <div class="security-note">
                 <strong>🔒 Security Note:</strong><br>
                 This panel is protected. Only authorized administrators can access.
@@ -204,12 +105,11 @@ if (empty($_SESSION['is_admin'])) {
     exit;
 }
 // File statistics
-$uploadDir = __DIR__ . '/uploads/';
+$uploadDir = dirname(__DIR__) . '/uploads/';
 $allFiles = glob($uploadDir . '*');
 $currentFiles = 0;
 $totalSize = 0;
 foreach ($allFiles as $file) {
-    // Считаем только если файл не .meta и не .views 
     $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
     if (is_file($file) && $ext !== 'meta' && $ext !== 'views') {
         $currentFiles++;
@@ -224,49 +124,25 @@ $weekAgo = time() - 7 * 24 * 60 * 60;
 foreach ($metaFiles as $meta) {
     $metaData = @json_decode(@file_get_contents($meta), true);
     if ($metaData && isset($metaData['created'])) {
-        if ($metaData['created'] >= $monthAgo) {
-            $uploadedLastMonth++;
-        }
-        if ($metaData['created'] >= $weekAgo) {
-            $uploadedLastWeek++;
-        }
+        if ($metaData['created'] >= $monthAgo) { $uploadedLastMonth++; }
+        if ($metaData['created'] >= $weekAgo) { $uploadedLastWeek++; }
     }
 }
-
-// Get real disk space information
 function getDiskSpace() {
-    $uploadDir = __DIR__ . '/uploads/';
+    $uploadDir = dirname(__DIR__) . '/uploads/';
     $totalSpace = disk_total_space($uploadDir);
     $freeSpace = disk_free_space($uploadDir);
     $usedSpace = $totalSpace - $freeSpace;
-    
-    return [
-        'total' => $totalSpace,
-        'free' => $freeSpace,
-        'used' => $usedSpace,
-        'usage_percent' => $totalSpace > 0 ? ($usedSpace / $totalSpace) * 100 : 0
-    ];
+    return [ 'total' => $totalSpace, 'free' => $freeSpace, 'used' => $usedSpace, 'usage_percent' => $totalSpace > 0 ? ($usedSpace / $totalSpace) * 100 : 0 ];
 }
-
 function formatFileSize($bytes) {
-    if ($bytes >= 1024 * 1024 * 1024) {
-        return number_format($bytes / 1024 / 1024 / 1024, 1) . ' GB';
-    } elseif ($bytes >= 1024 * 1024) {
-        return number_format($bytes / 1024 / 1024, 1) . ' MB';
-    } elseif ($bytes >= 1024) {
-        return number_format($bytes / 1024, 1) . ' KB';
-    } else {
-        return $bytes . ' B';
-    }
+    if ($bytes >= 1024 * 1024 * 1024) return number_format($bytes / 1024 / 1024 / 1024, 1) . ' GB';
+    if ($bytes >= 1024 * 1024) return number_format($bytes / 1024 / 1024, 1) . ' MB';
+    if ($bytes >= 1024) return number_format($bytes / 1024, 1) . ' KB';
+    return $bytes . ' B';
 }
-
 $diskInfo = getDiskSpace();
-
-// Calculate storage usage
-$storageUsage = $totalSize / (13 * 1024 * 1024 * 1024) * 100; // Assuming 13GB limit
-$storageUsage = min($storageUsage, 100);
-
-// Get server info
+$storageUsage = $totalSize / (13 * 1024 * 1024 * 1024) * 100; $storageUsage = min($storageUsage, 100);
 $serverLoad = sys_getloadavg();
 $memoryUsage = memory_get_usage(true);
 $memoryPeak = memory_get_peak_usage(true);

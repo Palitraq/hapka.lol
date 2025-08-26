@@ -5,11 +5,11 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Все короткие ссылки (5 или 6 латинских символов) — только на view.php (предпросмотр и счётчик)
-RewriteRule ^([a-zA-Z]{5,6})$ view.php?code=$1 [L,QSA]
+RewriteRule ^([a-zA-Z]{5,6})$ templates/view.php?code=$1 [L,QSA]
 
-# Админка
-RewriteRule ^admin$ admin.php [L] 
+RewriteRule ^admin\.php$ templates/admin.php [L]
+
+RewriteRule ^ShareX(?:\.php)?$ templates/ShareX.php [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

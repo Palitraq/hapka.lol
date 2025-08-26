@@ -172,7 +172,7 @@
       <div style="color:#aaa; margin-top: 6px;">Step 1: How to open custom uploader settings in ShareX</div>
     </div>
     <div style="margin-bottom: 18px;">
-      <img src="https://hapka.lol/PRCkYy" alt="step2" style="max-width: 100%; border-radius: 10px; box-shadow: 0 2px 12px #0007;">
+      <img src="https://hapka.lol/uploads/ShareX_7VTSWL97Ya.png" alt="step2" style="max-width: 100%; border-radius: 10px; box-shadow: 0 2px 12px #0007;">
       <div style="color:#aaa; margin-top: 6px;">Step 2: Fill in the custom uploader fields as shown</div>
       <div style="background:#181b20; color:#b6e1ff; border-radius:8px; margin:14px auto 0 auto; padding:12px 14px; max-width:480px; text-align:left; font-size:1em;">
         <div><b>Request URL:</b> <span style="user-select:all; cursor:pointer;" onclick="navigator.clipboard.writeText('https://hapka.lol/api/1/upload.php')">https://hapka.lol/api/1/upload.php</span></div>

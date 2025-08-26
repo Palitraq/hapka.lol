@@ -75,7 +75,7 @@ if (isset($_GET['link'])) {
     $metaPath = $uploadDir . $code . '.meta';
     if (!file_exists($metaPath)) {
         http_response_code(404);
-        include __DIR__ . '/404.php';
+        include __DIR__ . '/templates/404.php';
         exit;
     }
 }
@@ -175,7 +175,7 @@ $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
 if ($path !== '/' && !isset($_GET['link'])) {
     http_response_code(404);
-    include __DIR__ . '/404.php';
+    include __DIR__ . '/templates/404.php';
     exit;
 }
 ?>
