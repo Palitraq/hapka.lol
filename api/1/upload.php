@@ -91,6 +91,6 @@ echo json_encode([
     'status_code' => 200,
     'success' => [
         'short' => $short,
-        'url' => $url
+            'url' => $url
     ]
 ]); 
