@@ -1,0 +1,48 @@
+body {
+    text-align: center;
+    margin: 40px;
+    font-family: Arial, sans-serif;
+    background: #181a1b;
+}
+
+img {
+    max-width: 90vw;
+    max-height: 80vh;
+    border: 1px solid #333;
+    border-radius: 10px;
+    background: #23272a;
+    box-shadow: 0 2px 16px #0008;
+}
+
+video {
+    max-width: 90vw;
+    max-height: 80vh;
+    border: 1px solid #333;
+    border-radius: 10px;
+    background: #23272a;
+    box-shadow: 0 2px 16px #0008;
+}
+
+audio { 
+    width: 90vw; 
+    max-width: 600px; 
+    margin-top: 40px; 
+}
+
+.views { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    color: #aaa; 
+    margin-top: 18px; 
+    font-size: 15px; 
+    gap: 6px; 
+    user-select: none; 
+}
+
+.views svg { 
+    width: 20px; 
+    height: 20px; 
+    vertical-align: middle; 
+    fill: #aaa; 
+}

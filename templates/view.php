@@ -61,38 +61,7 @@ if (isImage($ext)) {
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" href="/static/logo.png">
         <title><?= isset($code) ? htmlspecialchars($code) : 'Image' ?> - hapka.lol</title>
-        <style>
-            body {
-                text-align: center;
-                margin: 40px;
-                font-family: Arial, sans-serif;
-                background: #181a1b;
-            }
-            img {
-                max-width: 90vw;
-                max-height: 80vh;
-                border: 1px solid #333;
-                border-radius: 10px;
-                background: #23272a;
-                box-shadow: 0 2px 16px #0008;
-            }
-            .views {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #aaa;
-                margin-top: 18px;
-                font-size: 15px;
-                gap: 6px;
-                user-select: none;
-            }
-            .views svg {
-                width: 20px;
-                height: 20px;
-                vertical-align: middle;
-                fill: #aaa;
-            }
-        </style>
+        <link rel="stylesheet" href="../css/view.css">
     </head>
     <body>
         <img src="/uploads/<?= htmlspecialchars($filename) ?>" alt="image"><br>
@@ -113,24 +82,7 @@ if (isImage($ext)) {
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" href="/static/logo.png">
         <title><?= isset($code) ? htmlspecialchars($code) : 'Video' ?> - hapka.lol</title>
-        <style>
-            body {
-                text-align: center;
-                margin: 40px;
-                font-family: Arial, sans-serif;
-                background: #181a1b;
-            }
-            video {
-                max-width: 90vw;
-                max-height: 80vh;
-                border: 1px solid #333;
-                border-radius: 10px;
-                background: #23272a;
-                box-shadow: 0 2px 16px #0008;
-            }
-            .views { display: flex; align-items: center; justify-content: center; color: #aaa; margin-top: 18px; font-size: 15px; gap: 6px; user-select: none; }
-            .views svg { width: 20px; height: 20px; vertical-align: middle; fill: #aaa; }
-        </style>
+        <link rel="stylesheet" href="../css/view.css">
     </head>
     <body>
         <video controls>
@@ -154,12 +106,7 @@ if (isImage($ext)) {
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" href="/static/logo.png">
         <title><?= isset($code) ? htmlspecialchars($code) : 'Audio' ?> - hapka.lol</title>
-        <style>
-            body { text-align: center; margin: 40px; font-family: Arial, sans-serif; background: #181a1b; }
-            audio { width: 90vw; max-width: 600px; margin-top: 40px; }
-            .views { display: flex; align-items: center; justify-content: center; color: #aaa; margin-top: 18px; font-size: 15px; gap: 6px; user-select: none; }
-            .views svg { width: 20px; height: 20px; vertical-align: middle; fill: #aaa; }
-        </style>
+        <link rel="stylesheet" href="../css/view.css">
     </head>
     <body>
         <audio controls>

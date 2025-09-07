@@ -245,32 +245,6 @@ window.addEventListener('drop', function(e) {
     }
 });
 
-// Support modal
-if (document.querySelector('.support-btn')) {
-    document.querySelector('.support-btn').onclick = function(e) {
-        e.preventDefault();
-        document.getElementById('support-modal').style.display = 'flex';
-    };
-    document.getElementById('support-close').onclick = function() {
-        document.getElementById('support-modal').style.display = 'none';
-    };
-}
-// Terms modal
-if (document.getElementById('terms-link')) {
-    document.getElementById('terms-link').onclick = function(e) {
-        e.preventDefault();
-        document.getElementById('terms-modal').style.display = 'flex';
-    };
-    document.getElementById('terms-close').onclick = function() {
-        document.getElementById('terms-modal').style.display = 'none';
-    };
-}
-window.addEventListener('click', function(event) {
-    let modal = document.getElementById('terms-modal');
-    if (modal && event.target === modal) modal.style.display = 'none';
-    let modal2 = document.getElementById('support-modal');
-    if (modal2 && event.target === modal2) modal2.style.display = 'none';
-});
 // Drag & Drop upload
 window.addEventListener('dragover', function(e) {
     e.preventDefault();
@@ -283,22 +257,6 @@ window.addEventListener('dragleave', function(e) {
         hideDragIndicator();
     }
 });
-// История: copy и delete
-if (document.querySelectorAll('.copy-btn').length) {
-    document.querySelectorAll('.copy-btn').forEach(btn => {
-        btn.onclick = function() {
-            let link = btn.getAttribute('data-link') || btn.parentElement.querySelector('.history-link').value;
-            // Если link — только 5 символов (код), формируем полный URL
-            if (/^[a-zA-Z0-9]{5}$/.test(link)) {
-                link = window.location.origin + '/' + link;
-            }
-            navigator.clipboard.writeText(link);
-            btn.textContent = '✔';
-            setTimeout(()=>{btn.textContent='📋';}, 1000);
-        };
-    });
-}
-
 // Копирование всех ссылок
 if (document.getElementById('copyAllBtn')) {
     document.getElementById('copyAllBtn').onclick = function() {
@@ -317,14 +275,4 @@ if (document.getElementById('copyAllBtn')) {
             }, 2000);
         }
     };
-}
-
-if (document.querySelectorAll('.del-btn').length) {
-    document.querySelectorAll('.del-btn').forEach(btn => {
-        btn.onclick = function() {
-            const idx = btn.getAttribute('data-idx');
-            const file = btn.getAttribute('data-file');
-            window.location = '?del_history=' + idx + '&del_file=' + encodeURIComponent(file);
-        };
-    });
 } 
