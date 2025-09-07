@@ -45,20 +45,20 @@
   </style>
 </head>
 <body>
-  <div class="header-wrap">
+<div class="header-wrap">
     <div class="header">
-      <div class="header-left">
+        <div class="header-left">
         <span class="logo"><a href="https://hapka.lol" class="logo-gradient" style="text-decoration:none;"><img src="/static/logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
-      </div>
-      <div class="header-right">
-        <a href="/ShareX.php" class="header-link" style="margin-right:12px;">ShareX</a>
-        <a href="https://github.com/Palitraq/hapka.lol" class="header-link">GitHub</a>
-        <span class="nav-dot">&bull;</span>
-        <a href="#" class="support-btn">&#10084; Support</a>
-      </div>
+        </div>
+        <div class="header-right">
+            <a href="/ShareX.php" class="header-link" style="margin-right:12px;">ShareX</a>
+            <a href="https://github.com/Palitraq/hapka.lol" class="header-link">GitHub</a>
+            <span class="nav-dot">&bull;</span>
+            <a href="#" class="support-btn">&#10084; Support</a>
+        </div>
     </div>
     <div class="header-underline"></div>
-  </div>
+</div>
 
   <div class="container">
     <h2 class="title">ShareX</h2>
@@ -68,51 +68,51 @@
       <ol>
         <li><b>Import</b> the file in ShareX:<br>Destinations → Custom uploader settings → Import.</li>
         <li><b>Select</b> "Custom image uploader" and "Custom file uploader" to make it default.</li>
-      </ol>
+  </ol>
     </div>
 
     <div class="note"></div>
-  </div>
-
-  <div id="support-modal" class="modal" style="display:none;">
-    <div class="modal-content">
-      <span class="modal-close" id="support-close">&times;</span>
-      <h2>&hearts; Support my life</h2>
-      <div style="margin-bottom: 12px;">
-        <b>Bitcoin:</b><br>
-        <span style="word-break:break-all;">bc1qh6r4ptmh5txv43c50s4wfv8ts5z06453ss3tmc</span>
-      </div>
-      <div style="margin-bottom: 12px;">
-        <b>USDT TRC20:</b><br>
-        <span style="word-break:break-all;">TNDvHcXWUcbjoJGQpEd6J3VygKT7RCHZ4g</span>
-      </div>
-      <div>
-        <b>TON:</b><br>
-        <span style="word-break:break-all;">UQCR0jBsHh8jSKw-hrs2cBehRg0rDdIOeZPOIiMYKoCBtQq9</span>
-      </div>
-      <div style="margin-top: 20px; display: flex; justify-content: center;">
-        <div style="display: inline-block; background: #1a162b; color: #b388ff; font-size: 0.98em; font-weight: 500; border-radius: 7px; padding: 5px 14px; text-align: center; user-select: none; opacity: 0.7;">
-          <span style="font-size:1em; vertical-align:middle;">💜</span> Donates help pay for hosting.
         </div>
+
+<div id="support-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="modal-close" id="support-close">&times;</span>
+    <h2>&hearts; Support my life</h2>
+    <div style="margin-bottom: 12px;">
+      <b>Bitcoin:</b><br>
+      <span style="word-break:break-all;">bc1qh6r4ptmh5txv43c50s4wfv8ts5z06453ss3tmc</span>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <b>USDT TRC20:</b><br>
+      <span style="word-break:break-all;">TNDvHcXWUcbjoJGQpEd6J3VygKT7RCHZ4g</span>
+    </div>
+    <div>
+      <b>TON:</b><br>
+      <span style="word-break:break-all;">UQCR0jBsHh8jSKw-hrs2cBehRg0rDdIOeZPOIiMYKoCBtQq9</span>
+    </div>
+    <div style="margin-top: 20px; display: flex; justify-content: center;">
+        <div style="display: inline-block; background: #1a162b; color: #b388ff; font-size: 0.98em; font-weight: 500; border-radius: 7px; padding: 5px 14px; text-align: center; user-select: none; opacity: 0.7;">
+        <span style="font-size:1em; vertical-align:middle;">💜</span> Donates help pay for hosting.
       </div>
+    </div>
     </div>
   </div>
 
-  <script>
-    // Support modal
-    if (document.querySelector('.support-btn')) {
-      document.querySelector('.support-btn').onclick = function(e) {
+<script>
+// Support modal
+if (document.querySelector('.support-btn')) {
+    document.querySelector('.support-btn').onclick = function(e) {
         e.preventDefault();
         document.getElementById('support-modal').style.display = 'flex';
-      };
-      document.getElementById('support-close').onclick = function() {
+    };
+    document.getElementById('support-close').onclick = function() {
         document.getElementById('support-modal').style.display = 'none';
-      };
-    }
-    window.addEventListener('click', function(event) {
+    };
+}
+window.addEventListener('click', function(event) {
       var modal = document.getElementById('support-modal');
       if (modal && event.target === modal) modal.style.display = 'none';
-    });
-  </script>
+});
+</script>
 </body>
 </html> 

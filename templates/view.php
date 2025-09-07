@@ -60,7 +60,7 @@ if (isImage($ext)) {
     <head>
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" href="/static/logo.png">
-        <title>Image</title>
+        <title><?= isset($code) ? htmlspecialchars($code) : 'Image' ?> - hapka.lol</title>
         <style>
             body {
                 text-align: center;
@@ -112,7 +112,7 @@ if (isImage($ext)) {
     <head>
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" href="/static/logo.png">
-        <title>Video</title>
+        <title><?= isset($code) ? htmlspecialchars($code) : 'Video' ?> - hapka.lol</title>
         <style>
             body {
                 text-align: center;
@@ -153,7 +153,7 @@ if (isImage($ext)) {
     <head>
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" href="/static/logo.png">
-        <title>Audio</title>
+        <title><?= isset($code) ? htmlspecialchars($code) : 'Audio' ?> - hapka.lol</title>
         <style>
             body { text-align: center; margin: 40px; font-family: Arial, sans-serif; background: #181a1b; }
             audio { width: 90vw; max-width: 600px; margin-top: 40px; }
