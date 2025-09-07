@@ -186,7 +186,7 @@ if ($path !== '/' && !isset($_GET['link'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="hapka.lol — fast and anonymous file sharing. Upload and share files up to 100 MB, no registration. Free!">
     <link rel="icon" type="image/png" href="/static/logo.png">
-    <title>File upload — hapka.lol</title>
+    <title>hapka.lol</title>
     <style>
         body {
             font-family: Arial, sans-serif;
