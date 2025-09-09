@@ -64,11 +64,12 @@ if (isImage($ext)) {
         <link rel="stylesheet" href="../css/view.css">
     </head>
     <body>
-        <img src="/uploads/<?= htmlspecialchars($filename) ?>" alt="image"><br>
+        <img class="zoomable" src="/uploads/<?= htmlspecialchars($filename) ?>" alt="image"><br>
         <div class="views">
             <span style="font-size: 20px;">&#128064;</span>
             <span style="font-size: 20px; font-weight: 500; margin-left: 4px; vertical-align: middle; position: relative; top: 6px;"><?= $views ?></span>
         </div>
+        <script src="../js/view.js"></script>
     </body>
     </html>
     <?php

@@ -14,6 +14,30 @@ img {
     box-shadow: 0 2px 16px #0008;
 }
 
+/* Zoom behavior */
+.zoomable {
+    transition: box-shadow 0.2s ease, opacity 0.15s ease;
+}
+
+.zoomable.is-zoomed {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: none; /* avoid flying between positions */
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    max-width: 95vw;
+    max-height: 95vh;
+    box-shadow: 0 10px 40px #000c;
+}
+
+/* Prevent background scroll when zoomed */
+body.no-scroll {
+    overflow: hidden;
+}
+
 video {
     max-width: 90vw;
     max-height: 80vh;
