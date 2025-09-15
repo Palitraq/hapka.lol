@@ -102,27 +102,13 @@ body {
     margin: 0 0 14px 0; 
     color: #e3e3e3; 
 }
-.download { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 10px; 
-    padding: 12px 18px; 
-    border-radius: 10px; 
-    font-weight: 600; 
-    color: #fff; 
-    text-decoration: none; 
-    background: linear-gradient(90deg, #7a4fd8 0%, #4a5bd8 100%); 
-    box-shadow: 0 8px 24px rgba(88,101,242,.35); 
-    border: 1px solid #4a5bd8; 
-    transition: transform .1s ease, box-shadow .2s ease, filter .2s ease; 
+.config-link {
+    color: #8f5cff;
+    text-decoration: none;
+    font-weight: 600;
 }
-.download:hover { 
-    transform: translateY(-1px); 
-    filter: brightness(1.05); 
-    box-shadow: 0 10px 28px rgba(88,101,242,.45); 
-}
-.download:active { 
-    transform: translateY(0); 
+.config-link:hover {
+    text-decoration: underline;
 }
 .note { 
     color: #b9bbbe; 
@@ -139,10 +125,7 @@ body {
     .container { 
         padding: 16px 4vw; 
     }
-    .download { 
-        width: 100%; 
-        justify-content: center; 
-    }
+    /* no special mobile rules for config text link */
 }
 
 /* Modal */

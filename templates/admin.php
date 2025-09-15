@@ -87,6 +87,65 @@ if (empty($_SESSION['is_admin'])) {
     <?php
     exit;
 }
+// AJAX: list files by date (YYYY-MM-DD)
+if (isset($_GET['list_by_date'])) {
+    $dateStr = $_GET['list_by_date'];
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateStr)) {
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Invalid date']);
+        exit;
+    }
+    $uploadDir = dirname(__DIR__) . '/uploads/';
+    $metaFiles = glob($uploadDir . '*.meta');
+    $startTs = strtotime($dateStr . ' 00:00:00');
+    $endTs = strtotime($dateStr . ' 23:59:59');
+    $items = [];
+    foreach ($metaFiles as $metaPath) {
+        $code = basename($metaPath, '.meta');
+        $meta = @json_decode(@file_get_contents($metaPath), true);
+        if (!$meta || !isset($meta['created'])) continue;
+        $created = (int)$meta['created'];
+        if ($created < $startTs || $created > $endTs) continue;
+        $saved = isset($meta['saved']) ? $meta['saved'] : (isset($meta['orig']) ? $meta['orig'] : '');
+        $filePath = $uploadDir . $saved;
+        $size = file_exists($filePath) ? filesize($filePath) : 0;
+        $items[] = [
+            'code' => $code,
+            'orig' => isset($meta['orig']) ? $meta['orig'] : '',
+            'saved' => $saved,
+            'size' => $size,
+            'created' => $created,
+        ];
+    }
+    usort($items, function($a, $b) { return $b['created'] <=> $a['created']; });
+    header('Content-Type: application/json');
+    echo json_encode(['status' => 'ok', 'date' => $dateStr, 'count' => count($items), 'items' => $items]);
+    exit;
+}
+// AJAX: delete by code
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_code'])) {
+    $code = preg_replace('/[^a-zA-Z0-9]/', '', $_POST['delete_code']);
+    $uploadDir = dirname(__DIR__) . '/uploads/';
+    $metaPath = $uploadDir . $code . '.meta';
+    $result = ['status' => 'error'];
+    if (file_exists($metaPath)) {
+        $meta = @json_decode(@file_get_contents($metaPath), true);
+        if ($meta && (isset($meta['saved']) || isset($meta['orig']))) {
+            $fileName = isset($meta['saved']) ? $meta['saved'] : $meta['orig'];
+            $filePath = $uploadDir . $fileName;
+            if (file_exists($filePath)) @unlink($filePath);
+            $viewsPath = $filePath . '.views';
+            if (file_exists($viewsPath)) @unlink($viewsPath);
+        }
+        @unlink($metaPath);
+        $result = ['status' => 'ok'];
+    } else {
+        $result = ['status' => 'error', 'message' => 'Not found'];
+    }
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
+}
 // File statistics
 $uploadDir = dirname(__DIR__) . '/uploads/';
 $allFiles = glob($uploadDir . '*');
@@ -255,7 +314,7 @@ foreach ($weeks as $wIdx => $week) {
                         $c = $cell['count'];
                         $d = $cell['date'];
                         ?>
-                        <div class="activity-cell" data-tooltip="<?= htmlspecialchars($d) ?>: <?= $c ?> upload<?= $c==1?'':'s' ?>" style="width:13px;height:13px;border-radius:3px;background:<?= activityColor($c) ?>;"></div>
+                        <div class="activity-cell" data-date="<?= htmlspecialchars($d) ?>" data-count="<?= (int)$c ?>" data-tooltip="<?= htmlspecialchars($d) ?>: <?= $c ?> upload<?= $c==1?'':'s' ?>" style="width:13px;height:13px;border-radius:3px;background:<?= activityColor($c) ?>;"></div>
                     <?php endfor; ?>
                 </div>
             <?php endforeach; ?>
@@ -293,6 +352,12 @@ foreach ($activity as $date => $count) {
         </span>
     </div>
 </div>
+    <div id="daily-listing" style="max-width: 900px; margin: 20px auto 0 auto; display:none;">
+        <div style="background: rgba(40,40,60,0.8); border:1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 18px;">
+            <div id="daily-title" style="font-weight:600; color:#e0e0e0; margin-bottom:12px;">Files for <span id="daily-date"></span> (<span id="daily-count">0</span>)</div>
+            <div id="daily-content" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+    </div>
         <div class="progress-section" style="margin-top:32px;">
             <div class="progress-title">Storage Usage</div>
             <div class="progress-bar">
@@ -322,3 +387,4 @@ foreach ($activity as $date => $count) {
     </div>
 </body>
 </html>
+<script src="../js/admin.js"></script>

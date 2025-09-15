@@ -108,17 +108,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
                 $metaPath = $uploadDir . $short . '.meta';
             } while (file_exists($metaPath));
             
-            // Генерируем уникальное имя файла только для .png
+            // Определяем, содержит ли имя не-ASCII символы (например, кириллицу)
+            $hasNonAscii = !preg_match('/^[\x20-\x7E]+$/u', $cleanName);
+
+            // Генерация имени
             if ($ext === 'png') {
+                // Для PNG по умолчанию генерируем случайное имя; если не-ASCII — длина 10
+                $randLen = $hasNonAscii ? 10 : 8;
                 do {
-                    $randomName = randomString(8) . '.' . $ext;
+                    $randomName = randomString($randLen) . '.' . $ext;
+                    $target = $uploadDir . $randomName;
+                } while (file_exists($target));
+            } else {
+                if ($hasNonAscii) {
+                    // Если есть не-ASCII символы — заменить basename на 10 латинских символов
+                    do {
+                        $randomName = randomString(10) . '.' . $ext;
                     $target = $uploadDir . $randomName;
                 } while (file_exists($target));
             } else {
                 // Новый блок: уникализация имени для дубликатов
-                $baseName = pathinfo($cleanName, PATHINFO_FILENAME);
-                $extension = pathinfo($cleanName, PATHINFO_EXTENSION);
-                $randomName = $cleanName;
+                    $baseName = pathinfo($cleanName, PATHINFO_FILENAME);
+                    $extension = pathinfo($cleanName, PATHINFO_EXTENSION);
+                    $randomName = $cleanName;
                 $target = $uploadDir . $randomName;
                 $counter = 1;
                 while (file_exists($target)) {
@@ -126,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
                     $target = $uploadDir . $randomName;
                     $counter++;
                 }
+            }
             }
             // Гарантируем отсутствие пробелов
             $randomName = str_replace(' ', '_', $randomName);

@@ -64,13 +64,30 @@ if (in_array($ext, $forbidden)) {
 }
 
 $cleanName = sanitizeFileName($file['name']);
+// if filename contains non-ASCII characters, use random 10-letter basename preserving extension
+$hasNonAscii = !preg_match('/^[\x20-\x7E]+$/u', $cleanName);
+if ($hasNonAscii) {
+    $cleanName = randomString(10) . ($ext ? ('.' . $ext) : '');
+}
 
 do {
     $short = randomString(6);
     $metaPath = $uploadDir . $short . '.meta';
-    $target = $uploadDir . $cleanName;
-    $savedName = $cleanName;
-} while (file_exists($metaPath) || file_exists($target));
+} while (file_exists($metaPath));
+
+// ensure unique target for file name
+$target = $uploadDir . $cleanName;
+$savedName = $cleanName;
+if (file_exists($target)) {
+    $base = pathinfo($cleanName, PATHINFO_FILENAME);
+    $extension = pathinfo($cleanName, PATHINFO_EXTENSION);
+    $counter = 1;
+    do {
+        $savedName = $base . '_' . $counter . ($extension ? ('.' . $extension) : '');
+        $target = $uploadDir . $savedName;
+        $counter++;
+    } while (file_exists($target));
+}
 
 if (!move_uploaded_file($file['tmp_name'], $target)) {
     http_response_code(500);
