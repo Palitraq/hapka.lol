@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     async function deleteByCode(code) {
         const form = new FormData();
         form.append('delete_code', code);
+        // Get CSRF token from the page
+        const csrfInput = document.querySelector('input[name="csrf_token"]');
+        if (csrfInput) {
+            form.append('csrf_token', csrfInput.value);
+        }
         const res = await fetch('./admin.php', { method: 'POST', body: form, credentials: 'same-origin' });
         if (!res.ok) throw new Error('Delete failed');
         return res.json();

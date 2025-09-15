@@ -1,5 +1,18 @@
 <?php
 session_start();
+// CSRF Protection
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+function generateCSRFToken() {
+    return $_SESSION['csrf_token'];
+}
+
+function validateCSRFToken($token) {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
 // Load password from root .env (robust search)
 function getEnvVar($key) {
     $paths = [
@@ -41,14 +54,20 @@ if (!$adminPassword) {
 if (isset($_POST['password'])) {
     if ($_POST['password'] === $adminPassword) {
         $_SESSION['is_admin'] = true;
+        session_regenerate_id(true); // Prevent session fixation
         header('Location: /admin.php');
         exit;
     } else {
         $error = 'Incorrect password';
     }
 }
-if (isset($_GET['logout'])) {
+// POST-only logout with CSRF protection
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        die('CSRF attack detected');
+    }
     unset($_SESSION['is_admin']);
+    session_regenerate_id(true);
     header('Location: /admin.php');
     exit;
 }
@@ -71,6 +90,7 @@ if (empty($_SESSION['is_admin'])) {
                 <div class="error"><?= $error ?></div>
             <?php endif; ?>
             <form method="post">
+                <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" placeholder="Enter admin password" required>
@@ -124,6 +144,11 @@ if (isset($_GET['list_by_date'])) {
 }
 // AJAX: delete by code
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_code'])) {
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'CSRF attack detected']);
+        exit;
+    }
     $code = preg_replace('/[^a-zA-Z0-9]/', '', $_POST['delete_code']);
     $uploadDir = dirname(__DIR__) . '/uploads/';
     $metaPath = $uploadDir . $code . '.meta';
@@ -207,9 +232,12 @@ $memoryPeak = memory_get_peak_usage(true);
                 <a href="https://hapka.lol" target="_blank" class="nav-btn">
                     🌐 Visit Site
                 </a>
-                <a href="?logout=1" class="nav-btn logout-btn">
-                    🚪 Logout
-                </a>
+                <form method="post" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+                    <button type="submit" name="logout" class="nav-btn logout-btn" style="border: none; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; padding: 12px 24px; cursor: pointer;">
+                        🚪 Logout
+                    </button>
+                </form>
             </div>
         </div>
         
