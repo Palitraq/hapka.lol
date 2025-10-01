@@ -6,7 +6,7 @@
   <link rel="icon" type="image/png" href="/static/logo.png">
   <title>ShareX — hapka.lol</title>
   <link rel="stylesheet" href="../css/sharex.css">
-  </head>
+</head>
 <body>
 <div class="header-wrap">
     <div class="header">
@@ -25,8 +25,8 @@
   <div class="container">
     <h2 class="title">ShareX</h2>
     <a class="config-link" href="/static/hapka.lol.sxcu" download>Click here to download the ShareX config</a>
-  </div>
+    </div>
 </body>
 <?php include __DIR__ . '/modals/support-modal.php'; ?>
 <script src="../js/modals.js"></script>
-</html>
+</html> 
