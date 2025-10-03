@@ -18,3 +18,4 @@
 
 1. hapka.lol/admin.php
 2. password in .env ( ADMIN_PASSWORD=QWERTY )
+<img width="1406" height="664" alt="image" src="https://github.com/user-attachments/assets/332415fb-600b-46f9-8b0e-29bc0b6a8b1b" />
