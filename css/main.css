@@ -1,21 +1,25 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 40px;
+    margin: clamp(16px, 4vw, 40px);
     background: #181a1b;
     color: #f1f1f1;
 }
 .header-wrap {
     max-width: 600px;
+    width: min(600px, 96vw);
     margin: 0 auto 0 auto;
 }
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    row-gap: 8px;
     padding: 18px 0 8px 0;
     margin-bottom: 0;
     background: transparent;
     max-width: 600px;
+    width: min(600px, 96vw);
     margin-left: auto;
     margin-right: auto;
 }
@@ -64,6 +68,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 .header-link {
     color: #8ab4f8;
@@ -76,6 +81,13 @@ body {
 .header-link:hover {
     background: #23272a;
     color: #fff;
+}
+/* GitHub link: show text on desktop, icon on mobile */
+.gh-icon { display: none; }
+.gh-text { display: inline; }
+@media (max-width: 700px) {
+    .gh-icon { display: inline; }
+    .gh-text { display: none; }
 }
 .support-btn {
     background: #23272a;
@@ -91,6 +103,7 @@ body {
     align-items: center;
     gap: 4px;
     margin-top: 0;
+    max-width: 100%;
 }
 .support-btn:hover {
     background: #5865f2;
@@ -103,11 +116,13 @@ body {
     border-radius: 2px;
     margin-bottom: 30px;
     max-width: 600px;
+    width: min(600px, 96vw);
     margin-left: auto;
     margin-right: auto;
 }
 .container {
     max-width: 600px;
+    width: min(600px, 96vw);
     margin: auto;
     background: #202225;
     border-radius: 12px;
@@ -146,6 +161,14 @@ input[type=file]::file-selector-button:hover {
 }
 .link a:hover {
     color: #fff;
+    text-decoration: underline;
+}
+.config-link {
+    color: #8f5cff;
+    text-decoration: none;
+    font-weight: 600;
+}
+.config-link:hover {
     text-decoration: underline;
 }
 .error {

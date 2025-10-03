@@ -17,14 +17,14 @@
             <a href="/ShareX.php" class="header-link" style="margin-right:12px;">ShareX</a>
             <a href="https://github.com/Palitraq/hapka.lol" class="header-link">GitHub</a>
             <span class="nav-dot">&bull;</span>
-            <a href="#" class="support-btn">&#10084; Support</a>
+            <a href="#" class="support-btn">&#10084;</a>
         </div>
     </div>
     <div class="header-underline"></div>
 </div>
   <div class="container">
     <h2 class="title">ShareX</h2>
-    <a class="config-link" href="/static/hapka.lol.sxcu" download>Click here to download the ShareX config</a>
+    <a class="config-link" href="/static/hapka.lol.sxcu" download>config</a>
     </div>
 </body>
 <?php include __DIR__ . '/modals/support-modal.php'; ?>
