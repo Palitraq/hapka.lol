@@ -52,84 +52,23 @@ if (empty($_SESSION[$sessionKey])) {
     $_SESSION[$sessionKey] = true;
 }
 
+// Прямой вывод файла без HTML и без редиректа
+$mime = 'application/octet-stream';
 if (isImage($ext)) {
-    // Просмотр изображения
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="/static/logo.png">
-        <title><?= isset($code) ? htmlspecialchars($code) : 'Image' ?> - hapka.lol</title>
-        <link rel="stylesheet" href="../css/view.css">
-    </head>
-    <body>
-        <img src="/uploads/<?= htmlspecialchars($filename) ?>" alt="image"><br>
-        <div class="views">
-            <span style="font-size: 20px;">&#128064;</span>
-            <span style="font-size: 20px; font-weight: 500; margin-left: 4px; vertical-align: middle; position: relative; top: 6px;"><?= $views ?></span>
-        </div>
-    </body>
-    </html>
-    <?php
-    exit;
+	$mime = 'image/' . ($ext === 'jpg' ? 'jpeg' : $ext);
 } elseif (isVideo($ext)) {
-    // Просмотр видео
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="/static/logo.png">
-        <title><?= isset($code) ? htmlspecialchars($code) : 'Video' ?> - hapka.lol</title>
-        <link rel="stylesheet" href="../css/view.css">
-    </head>
-    <body>
-        <video controls>
-            <source src="/uploads/<?= htmlspecialchars($filename) ?>">
-            Your browser does not support the video tag.
-        </video><br>
-        <div class="views">
-            <span style="font-size: 20px;">&#128064;</span>
-            <span style="font-size: 20px; font-weight: 500; margin-left: 4px; vertical-align: middle; position: relative; top: 6px;"><?= $views ?></span>
-        </div>
-    </body>
-    </html>
-    <?php
-    exit;
+	$mime = 'video/' . $ext;
 } elseif (isAudio($ext)) {
-    // Просмотр аудио
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="/static/logo.png">
-        <title><?= isset($code) ? htmlspecialchars($code) : 'Audio' ?> - hapka.lol</title>
-        <link rel="stylesheet" href="../css/view.css">
-    </head>
-    <body>
-        <audio controls>
-            <source src="/uploads/<?= htmlspecialchars($filename) ?>" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio><br>
-        <div class="views">
-            <span style="font-size: 20px;">&#128064;</span>
-            <span style="font-size: 20px; font-weight: 500; margin-left: 4px; vertical-align: middle; position: relative; top: 6px;"><?= $views ?></span>
-        </div>
-    </body>
-    </html>
-    <?php
-    exit;
-} else {
-    // Скачивание других файлов
-    header('Content-Description: File Transfer');
-    header('Content-Type: application/octet-stream');
-    header('Content-Disposition: attachment; filename="'.basename($filename).'"');
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate');
-    header('Pragma: public');
-    header('Content-Length: ' . filesize($filepath));
-    readfile($filepath);
-    exit;
-} 
+	$mime = 'audio/mpeg';
+}
+
+// Для изображений/видео/аудио — inline; для остальных — attachment
+$isInline = (strpos($mime, 'image/') === 0 || strpos($mime, 'video/') === 0 || strpos($mime, 'audio/') === 0);
+$disposition = $isInline ? 'inline' : 'attachment';
+
+header('Content-Type: ' . $mime);
+header('Content-Disposition: ' . $disposition . '; filename="' . rawurlencode(basename($filename)) . '"');
+header('Content-Length: ' . filesize($filepath));
+header('Accept-Ranges: bytes');
+readfile($filepath);
+exit;
