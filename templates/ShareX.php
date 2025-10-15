@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/static/logo.png">
   <title>ShareX — hapka.lol</title>
-  <link rel="stylesheet" href="../static/css/sharex.css">
+  <link rel="stylesheet" href="/static/css/sharex.css">
 </head>
 <body>
 <div class="header-wrap">
@@ -28,5 +28,5 @@
     </div>
 </body>
 <?php include __DIR__ . '/modals/support-modal.php'; ?>
-<script src="../static/js/modals.js"></script>
+<script src="/static/js/modals.js"></script>
 </html> 
