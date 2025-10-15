@@ -83,24 +83,15 @@ body {
     font-size: 1.1em; 
 }
 .support-btn { 
-    background: #23272a; 
-    color: #fff; 
-    border-radius: 6px; 
-    padding: 4px 14px 4px 10px; 
-    font-size: 1rem; 
+    color: #8ab4f8; 
     text-decoration: none; 
-    font-weight: 500; 
-    border: 1px solid #36393f; 
-    transition: background .2s, border .2s; 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 4px; 
-    white-space: nowrap;
-    flex-shrink: 0;
+    font-size: 1rem; 
+    padding: 4px 10px; 
+    border-radius: 6px; 
+    transition: background .2s, color .2s; 
 }
 .support-btn:hover { 
-    background: #5865f2; 
-    border: 1px solid #5865f2; 
+    background: #23272a; 
     color: #fff; 
 }
 .header-underline { 

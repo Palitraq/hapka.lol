@@ -14,10 +14,9 @@
             <span class="logo"><a href="https://hapka.lol" class="logo-gradient" style="text-decoration:none;"><img src="/static/logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
         </div>
         <div class="header-right">
-            <a href="/ShareX.php" class="header-link" style="margin-right:12px;">ShareX</a>
+            <a href="/ShareX.php" class="header-link">ShareX</a>
             <a href="https://github.com/Palitraq/hapka.lol" class="header-link">GitHub</a>
-            <span class="nav-dot">&bull;</span>
-            <a href="#" class="support-btn">&#10084;</a>
+            <a href="#" class="header-link support-btn">Support</a>
         </div>
     </div>
     <div class="header-underline"></div>

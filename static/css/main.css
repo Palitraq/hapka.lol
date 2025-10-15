@@ -88,24 +88,16 @@ body {
     color: #fff;
 }
 .support-btn {
-    background: #23272a;
-    color: #fff;
-    border-radius: 6px;
-    padding: 4px 14px 4px 10px;
-    font-size: 1rem;
+    color: #8ab4f8;
     text-decoration: none;
-    font-weight: 500;
-    border: 1px solid #36393f;
-    transition: background 0.2s, border 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 0;
-    max-width: 100%;
+    font-size: 1rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    display: inline-block;
 }
 .support-btn:hover {
-    background: #5865f2;
-    border: 1px solid #5865f2;
+    background: #23272a;
     color: #fff;
 }
 .header-underline {
