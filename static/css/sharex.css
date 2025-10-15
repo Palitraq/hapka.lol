@@ -1,15 +1,21 @@
+* {
+    box-sizing: border-box;
+}
 body { 
     background: #181a1b; 
     color: #e3e3e3; 
     font-family: Arial, sans-serif; 
-    margin: clamp(16px, 4vw, 40px); 
+    margin: 0;
+    padding: clamp(16px, 4vw, 40px);
+    overflow-x: hidden;
 }
 
 /* Header */
 .header-wrap { 
     max-width: 600px; 
-    width: min(600px, 96vw);
-    margin: 0 auto 0 auto; 
+    width: min(600px, 100%);
+    margin: 0 auto 0 auto;
+    overflow: hidden;
 }
 .header { 
     display: flex; 
@@ -20,21 +26,27 @@ body {
     padding: 18px 0 8px 0; 
     background: transparent; 
     max-width: 600px; 
-    width: min(600px, 96vw);
+    width: 100%;
     margin-left: auto;
-    margin-right: auto; 
+    margin-right: auto;
+    min-width: 0;
+    overflow: hidden;
 }
 .header-left { 
     display: flex; 
     align-items: center; 
-    gap: 24px; 
+    gap: 24px;
+    min-width: 0;
+    flex-shrink: 1;
 }
 .logo { 
     font-size: 2rem; 
     font-weight: 700; 
     letter-spacing: 1px; 
     display: flex; 
-    align-items: center; 
+    align-items: center;
+    min-width: 0;
+    flex-shrink: 1;
 }
 .logo-gradient { 
     background: linear-gradient(90deg, #8f5cff 0%, #5865f2 100%); 
@@ -48,6 +60,8 @@ body {
     align-items: center; 
     gap: 8px; 
     flex-wrap: wrap;
+    min-width: 0;
+    flex-shrink: 1;
 }
 .header-link { 
     color: #8ab4f8; 
@@ -55,7 +69,9 @@ body {
     font-size: 1rem; 
     padding: 4px 10px; 
     border-radius: 6px; 
-    transition: background .2s, color .2s; 
+    transition: background .2s, color .2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .header-link:hover { 
     background: #23272a; 
@@ -79,7 +95,8 @@ body {
     display: inline-flex; 
     align-items: center; 
     gap: 4px; 
-    max-width: 90%;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .support-btn:hover { 
     background: #5865f2; 
@@ -92,20 +109,23 @@ body {
     border-radius: 2px; 
     margin-bottom: 30px; 
     max-width: 600px; 
-    width: min(600px, 96vw);
+    width: 100%;
     margin-left: auto; 
-    margin-right: auto; 
+    margin-right: auto;
+    overflow: hidden;
 }
 
 /* Page */
 .container { 
     max-width: 600px; 
-    width: min(600px, 96vw);
-    margin: auto; 
+    width: 100%;
+    margin: 0 auto; 
     background: #202225; 
     border-radius: 12px; 
     border: 1px solid #23272a; 
     padding: 18px 28px 24px 28px; 
+    overflow: hidden;
+    box-sizing: border-box;
 }
 .title { 
     margin: 0 0 14px 0; 
@@ -130,11 +150,91 @@ body {
     margin: 6px 0; 
 }
 
-@media (max-width: 600px) {
-    .container { 
-        padding: 16px 4vw; 
+@media (max-width: 700px) {
+    body {
+        padding: 8px;
     }
-    /* no special mobile rules for config text link */
+    .header-wrap, .header, .header-underline, .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        min-width: 0;
+    }
+    .container { 
+        padding: 16px 12px 20px 12px !important;
+        font-size: 1.05em;
+        margin: 0 auto;
+    }
+    .header-underline {
+        margin-bottom: 20px;
+    }
+    .header {
+        padding: 12px 0 6px 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .header-left, .header-right {
+        gap: 8px;
+        justify-content: center;
+    }
+    .logo {
+        font-size: 1.3rem;
+    }
+    .header-link {
+        font-size: 0.85rem;
+        padding: 2px 6px;
+    }
+    .support-btn {
+        font-size: 0.85rem;
+        padding: 2px 8px 2px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 4px;
+    }
+    .container {
+        padding: 12px 8px 16px 8px !important;
+        font-size: 1em;
+    }
+    .header-underline {
+        margin-bottom: 16px;
+    }
+    .header-right {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+    }
+    .header-link {
+        font-size: 0.8rem;
+        padding: 2px 4px;
+    }
+    .support-btn {
+        font-size: 0.8rem;
+        padding: 2px 6px 2px 4px;
+    }
+    .nav-dot {
+        display: none;
+    }
+}
+
+@media (min-width: 701px) and (max-width: 900px) {
+    body {
+        padding: clamp(12px, 3vw, 24px);
+    }
+    .container {
+        padding: 20px 24px 22px 24px;
+    }
+}
+
+@media (min-width: 901px) {
+    body {
+        padding: clamp(20px, 4vw, 40px);
+    }
+    .container {
+        padding: 18px 28px 24px 28px;
+    }
 }
 
 /* Modal */

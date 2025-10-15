@@ -211,10 +211,7 @@ if ($path !== '/' && !isset($_GET['link'])) {
         </div>
         <div class="header-right">
             <a href="/ShareX.php" class="header-link" style="margin-right:12px;">ShareX</a>
-            <a href="https://github.com/Palitraq/hapka.lol" class="header-link" title="GitHub" aria-label="GitHub">
-                <span class="gh-text">GitHub</span>
-                <img src="/static/github-mark.png" alt="GitHub" class="gh-icon" style="height:20px; width:20px; vertical-align:middle;"/>
-            </a>
+            <a href="https://github.com/Palitraq/hapka.lol" class="header-link" title="GitHub" aria-label="GitHub">GitHub</a>
             <span class="nav-dot">&bull;</span>
             <a href="#" class="support-btn">&#10084;</a>
         </div>

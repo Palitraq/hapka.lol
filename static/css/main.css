@@ -1,12 +1,17 @@
+* {
+    box-sizing: border-box;
+}
 body {
     font-family: Arial, sans-serif;
-    margin: clamp(16px, 4vw, 40px);
+    margin: 0;
+    padding: clamp(16px, 4vw, 40px);
     background: #181a1b;
     color: #f1f1f1;
+    overflow-x: hidden;
 }
 .header-wrap {
     max-width: 600px;
-    width: min(600px, 96vw);
+    width: min(600px, 100%);
     margin: 0 auto 0 auto;
 }
 .header {
@@ -19,7 +24,7 @@ body {
     margin-bottom: 0;
     background: transparent;
     max-width: 600px;
-    width: min(600px, 96vw);
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -82,13 +87,6 @@ body {
     background: #23272a;
     color: #fff;
 }
-/* GitHub link: show text on desktop, icon on mobile */
-.gh-icon { display: none; }
-.gh-text { display: inline; }
-@media (max-width: 700px) {
-    .gh-icon { display: inline; }
-    .gh-text { display: none; }
-}
 .support-btn {
     background: #23272a;
     color: #fff;
@@ -116,19 +114,21 @@ body {
     border-radius: 2px;
     margin-bottom: 30px;
     max-width: 600px;
-    width: min(600px, 96vw);
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
 .container {
     max-width: 600px;
-    width: min(600px, 96vw);
-    margin: auto;
+    width: 100%;
+    margin: 0 auto;
     background: #202225;
     border-radius: 12px;
     border: 1px solid #23272a;
     box-shadow: none;
     padding: 18px 28px 24px 28px;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 input[type=file] {
     margin-bottom: 10px;
@@ -157,7 +157,10 @@ input[type=file]::file-selector-button:hover {
 }
 .link a {
     color: #8ab4f8;
-    word-break: break-all;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    display: inline-block;
 }
 .link a:hover {
     color: #fff;
@@ -301,24 +304,42 @@ li {
 .upload-success {
 }
 @media (max-width: 700px) {
+    body {
+        padding: 8px;
+    }
     .header-wrap, .header, .header-underline, .container {
-        max-width: 98vw !important;
+        max-width: 100% !important;
+        width: 100% !important;
         min-width: 0;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
     }
     .container {
-        padding: 10vw 2vw 6vw 2vw !important;
+        padding: 16px 12px 20px 12px !important;
         font-size: 1.05em;
+        margin: 0 auto;
+    }
+    .header-underline {
+        margin-bottom: 20px;
     }
     .header {
         padding: 12px 0 6px 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
     }
     .header-left, .header-right {
-        gap: 10px;
+        gap: 8px;
+        justify-content: center;
     }
     .logo {
         font-size: 1.3rem;
+    }
+    .header-link {
+        font-size: 0.85rem;
+        padding: 2px 6px;
+    }
+    .support-btn {
+        font-size: 0.85rem;
+        padding: 2px 8px 2px 6px;
     }
     .modal-content {
         max-width: 98vw;
@@ -345,6 +366,53 @@ li {
     }
     audio, video, img {
         max-width: 98vw !important;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 4px;
+    }
+    .container {
+        padding: 12px 8px 16px 8px !important;
+        font-size: 1em;
+    }
+    .header-underline {
+        margin-bottom: 16px;
+    }
+    .header-right {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+    }
+    .header-link {
+        font-size: 0.8rem;
+        padding: 2px 4px;
+    }
+    .support-btn {
+        font-size: 0.8rem;
+        padding: 2px 6px 2px 4px;
+    }
+    .nav-dot {
+        display: none;
+    }
+}
+
+@media (min-width: 701px) and (max-width: 900px) {
+    body {
+        padding: clamp(12px, 3vw, 24px);
+    }
+    .container {
+        padding: 20px 24px 22px 24px;
+    }
+}
+
+@media (min-width: 901px) {
+    body {
+        padding: clamp(20px, 4vw, 40px);
+    }
+    .container {
+        padding: 18px 28px 24px 28px;
     }
 }
 .history-list {
@@ -394,7 +462,8 @@ li {
     font-size: 1.08em;
     margin-bottom: 4px;
     color: #fff;
-    word-break: break-all;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 .history-link-row {
     display: flex;
@@ -411,7 +480,9 @@ li {
     padding: 4px 8px;
     font-size: 1em;
     outline: none;
-    word-break: break-all;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
 }
 .copy-btn, .del-btn {
     background: #23272a;
