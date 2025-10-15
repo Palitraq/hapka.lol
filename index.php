@@ -200,7 +200,7 @@ if ($path !== '/' && !isset($_GET['link'])) {
     <meta name="description" content="hapka.lol — fast and anonymous file sharing. Upload and share files up to 100 MB, no registration. Free!">
     <link rel="icon" type="image/png" href="/static/logo.png">
     <title>hapka.lol</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="../static/css/main.css">
 </head>
 <body>
 <div class="header-wrap">
@@ -334,16 +334,11 @@ if ($path !== '/' && !isset($_GET['link'])) {
         </div>
     <?php endif; ?>
 </div>
-<div class="container" style="margin-top: 18px;">
-    <h2 class="title">ShareX</h2>
-    <a class="config-link" href="/static/hapka.lol.sxcu" download>config</a>
-    <div class="note" style="color:#b9bbbe;margin-top:8px;">Download the preconfigured ShareX uploader file.</div>
-</div>
 <?php include __DIR__ . '/templates/modals/support-modal.php'; ?>
 <?php include __DIR__ . '/templates/modals/terms-modal.php'; ?>
-<script src="js/main.js"></script>
-<script src="js/history.js"></script>
-<script src="js/modals.js"></script>
+<script src="../static/js/main.js"></script>
+<script src="../static/js/history.js"></script>
+<script src="../static/js/modals.js"></script>
 
 <!-- Drag & Drop индикатор -->
 <div id="dragIndicator" class="drag-indicator">📁 Drop files here</div>

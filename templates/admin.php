@@ -80,7 +80,7 @@ if (empty($_SESSION['is_admin'])) {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="/static/logo.png">
         <title>Admin Panel — hapka.lol</title>
-        <link rel="stylesheet" href="../css/admin.css">
+        <link rel="stylesheet" href="../static/css/admin.css">
     </head>
     <body>
         <div class="login-container">
@@ -415,4 +415,4 @@ foreach ($activity as $date => $count) {
     </div>
 </body>
 </html>
-<script src="../js/admin.js"></script>
+<script src="../static/js/admin.js"></script>
