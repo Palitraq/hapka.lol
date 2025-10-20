@@ -1,14 +1,11 @@
 <?php
 session_start();
-$maxFileSize = 100 * 1024 * 1024; // 100 MB
+$maxFileSize = 100 * 1024 * 1024;
 $uploadDir = __DIR__ . '/uploads/';
 if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
 $storageDays = 30;
 $ttl = $storageDays * 24 * 60 * 60;
-
-// Удаление старых файлов
-// (удалено)
 
 function getExtension($filename) {
     return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -337,7 +334,6 @@ if ($path !== '/' && !isset($_GET['link'])) {
 <script src="/static/js/history.js"></script>
 <script src="/static/js/modals.js"></script>
 
-<!-- Drag & Drop индикатор -->
 <div id="dragIndicator" class="drag-indicator">📁 Drop files here</div>
 
 </body>
