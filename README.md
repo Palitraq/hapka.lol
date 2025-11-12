@@ -20,6 +20,7 @@ file hapka.lol - nginx conf
 
 1. hapka.lol/admin.php
 2. password in .env ( ADMIN_PASSWORD=QWERTY )
-in .env STORAGE_LIMIT_GB=123 to admin panel
+3. in .env STORAGE_LIMIT_GB=123 to admin panel
+
 
 <img width="1406" height="664" alt="image" src="https://github.com/user-attachments/assets/332415fb-600b-46f9-8b0e-29bc0b6a8b1b" />
