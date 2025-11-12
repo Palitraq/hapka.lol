@@ -8,14 +8,18 @@
 - Upload history (session-based)
 - Modern dark design
 
+file hapka.lol - nginx conf
+
 ## How to use
 
 1. Upload to any PHP hosting
 2. Create a writable `uploads/` folder in the project root
-3. Done!
+4. Done!
 
 ### Admin panel
 
 1. hapka.lol/admin.php
 2. password in .env ( ADMIN_PASSWORD=QWERTY )
+in .env STORAGE_LIMIT_GB=123 to admin panel
+
 <img width="1406" height="664" alt="image" src="https://github.com/user-attachments/assets/332415fb-600b-46f9-8b0e-29bc0b6a8b1b" />

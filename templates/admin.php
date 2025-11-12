@@ -209,7 +209,9 @@ function formatFileSize($bytes) {
     return $bytes . ' B';
 }
 $diskInfo = getDiskSpace();
-$storageUsage = $totalSize / (13 * 1024 * 1024 * 1024) * 100; $storageUsage = min($storageUsage, 100);
+$storageLimitGB = (float)(getEnvVar('STORAGE_LIMIT_GB') ?: 26);
+$storageLimitBytes = $storageLimitGB * 1024 * 1024 * 1024;
+$storageUsage = $totalSize / $storageLimitBytes * 100; $storageUsage = min($storageUsage, 100);
 $serverLoad = sys_getloadavg();
 $memoryUsage = memory_get_usage(true);
 $memoryPeak = memory_get_peak_usage(true);
@@ -392,7 +394,7 @@ foreach ($activity as $date => $count) {
                 <div class="progress-fill" style="width: <?= $storageUsage ?>%"></div>
             </div>
             <div class="progress-text">
-                <?= number_format($storageUsage, 1) ?>% used (<?= number_format($totalSize / 1024 / 1024, 1) ?> MB / 13 GB)
+                <?= number_format($storageUsage, 1) ?>% used (<?= number_format($totalSize / 1024 / 1024, 1) ?> MB / <?= number_format($storageLimitGB, 0) ?> GB)
             </div>
         </div>
         
