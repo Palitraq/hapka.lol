@@ -107,41 +107,6 @@ if (empty($_SESSION['is_admin'])) {
     <?php
     exit;
 }
-// AJAX: list files by date (YYYY-MM-DD)
-if (isset($_GET['list_by_date'])) {
-    $dateStr = $_GET['list_by_date'];
-    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateStr)) {
-        header('Content-Type: application/json');
-        echo json_encode(['status' => 'error', 'message' => 'Invalid date']);
-        exit;
-    }
-    $uploadDir = dirname(__DIR__) . '/uploads/';
-    $metaFiles = glob($uploadDir . '*.meta');
-    $startTs = strtotime($dateStr . ' 00:00:00');
-    $endTs = strtotime($dateStr . ' 23:59:59');
-    $items = [];
-    foreach ($metaFiles as $metaPath) {
-        $code = basename($metaPath, '.meta');
-        $meta = @json_decode(@file_get_contents($metaPath), true);
-        if (!$meta || !isset($meta['created'])) continue;
-        $created = (int)$meta['created'];
-        if ($created < $startTs || $created > $endTs) continue;
-        $saved = isset($meta['saved']) ? $meta['saved'] : (isset($meta['orig']) ? $meta['orig'] : '');
-        $filePath = $uploadDir . $saved;
-        $size = file_exists($filePath) ? filesize($filePath) : 0;
-        $items[] = [
-            'code' => $code,
-            'orig' => isset($meta['orig']) ? $meta['orig'] : '',
-            'saved' => $saved,
-            'size' => $size,
-            'created' => $created,
-        ];
-    }
-    usort($items, function($a, $b) { return $b['created'] <=> $a['created']; });
-    header('Content-Type: application/json');
-    echo json_encode(['status' => 'ok', 'date' => $dateStr, 'count' => count($items), 'items' => $items]);
-    exit;
-}
 // AJAX: delete by code
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_code'])) {
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
@@ -270,7 +235,6 @@ $memoryPeak = memory_get_peak_usage(true);
         </div>
         
 <?php
-// === График активности загрузки файлов (GitHub-style) ===
 $metaFiles = glob($uploadDir . '*.meta');
 $activity = [];
 $now = time();
@@ -285,14 +249,12 @@ foreach ($metaFiles as $meta) {
         if (isset($activity[$day])) $activity[$day]++;
     }
 }
-// Преобразуем в недели для сетки
 $weeks = [];
 $days = array_keys($activity);
 $firstDay = strtotime($days[0]);
-$firstWeekDay = date('N', $firstDay); // 1=Mon, 7=Sun
+$firstWeekDay = date('N', $firstDay);
 $week = [];
 $dayIdx = 0;
-// Добавить пустые ячейки, если год назад был не понедельник
 if ($firstWeekDay > 1) {
     for ($i = 1; $i < $firstWeekDay; $i++) {
         $week[] = ['count' => 0, 'date' => ''];
@@ -308,15 +270,13 @@ foreach ($activity as $day => $count) {
     }
 }
 if (count($week)) $weeks[] = $week;
-// Цвета (можно настроить)
 function activityColor($count) {
-    if ($count == 0) return '#2d3140'; // Было #23272a, теперь светлее
+    if ($count == 0) return '#2d3140';
     if ($count == 1) return '#8f5cff22';
     if ($count <= 3) return '#8f5cff55';
     if ($count <= 7) return '#8f5cffaa';
     return '#8f5cff';
 }
-// Считаем, в какой неделе начинается каждый месяц
 $monthLabels = [];
 $prevMonth = null;
 foreach ($weeks as $wIdx => $week) {
@@ -343,15 +303,18 @@ foreach ($weeks as $wIdx => $week) {
                         $cell = isset($w[$i]) ? $w[$i] : ['count'=>0,'date'=>''];
                         $c = $cell['count'];
                         $d = $cell['date'];
+                        $tooltip = '';
+                        if ($d) {
+                            $tooltip = htmlspecialchars($d, ENT_QUOTES, 'UTF-8') . ': ' . $c . ' upload' . ($c==1?'':'s');
+                        }
                         ?>
-                        <div class="activity-cell" data-date="<?= htmlspecialchars($d) ?>" data-count="<?= (int)$c ?>" data-tooltip="<?= htmlspecialchars($d) ?>: <?= $c ?> upload<?= $c==1?'':'s' ?>" style="width:13px;height:13px;border-radius:3px;background:<?= activityColor($c) ?>;"></div>
+                        <div class="activity-cell" style="width:13px;height:13px;border-radius:3px;background:<?= activityColor($c) ?>;cursor:default;"<?php if ($tooltip): ?> data-tooltip="<?= $tooltip ?>"<?php endif; ?>></div>
                     <?php endfor; ?>
                 </div>
             <?php endforeach; ?>
         </div>
     </div>
     <?php
-// Найти день с максимальной активностью
 $peakDate = '';
 $peakCount = 0;
 foreach ($activity as $date => $count) {
@@ -382,12 +345,106 @@ foreach ($activity as $date => $count) {
         </span>
     </div>
 </div>
-    <div id="daily-listing" style="max-width: 900px; margin: 20px auto 0 auto; display:none;">
-        <div style="background: rgba(40,40,60,0.8); border:1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 18px;">
-            <div id="daily-title" style="font-weight:600; color:#e0e0e0; margin-bottom:12px;">Files for <span id="daily-date"></span> (<span id="daily-count">0</span>)</div>
-            <div id="daily-content" style="display:flex; flex-direction:column; gap:10px;"></div>
-        </div>
+
+<div style="margin: 32px auto 0 auto; max-width: 900px; width:100%;">
+    <div style="background:rgba(40,40,60,0.8); border-radius:15px; border:1px solid rgba(255,255,255,0.1); padding:25px;">
+        <form id="deleteForm" style="display:flex; gap:12px; align-items:flex-end;">
+            <div style="flex:1;">
+                <input 
+                    type="text" 
+                    id="deleteCode" 
+                    name="delete_code" 
+                    placeholder="Enter file code" 
+                    required
+                    style="width:100%; padding:12px 15px; border:2px solid #404060; border-radius:10px; font-size:1rem; transition:all 0.3s ease; background:#2a2a3a; color:#e0e0e0;"
+                    autocomplete="off"
+                    onfocus="this.style.borderColor='#667eea'; this.style.background='#303040'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.2)';"
+                    onblur="this.style.borderColor='#404060'; this.style.background='#2a2a3a'; this.style.boxShadow='none';"
+                >
+            </div>
+            <button 
+                type="submit" 
+                id="deleteBtn"
+                style="padding:12px 32px; background:linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); color:white; border:none; border-radius:10px; font-size:1rem; font-weight:400; cursor:pointer; transition:all 0.3s ease; white-space:nowrap; height:fit-content;"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(255, 107, 107, 0.3)';"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+            >
+                Delete
+            </button>
+        </form>
+        <div id="deleteResult" style="margin-top:15px; display:none; padding:12px; border-radius:8px; font-size:0.9rem;"></div>
     </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('deleteForm');
+    const codeInput = document.getElementById('deleteCode');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const resultDiv = document.getElementById('deleteResult');
+    
+    // Get CSRF token
+    const csrfInput = document.querySelector('input[name="csrf_token"]');
+    const csrfToken = csrfInput ? csrfInput.value : '';
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const code = codeInput.value.trim();
+        if (!code) return;
+        
+        // Disable button
+        deleteBtn.disabled = true;
+        deleteBtn.style.opacity = '0.6';
+        deleteBtn.style.cursor = 'not-allowed';
+        
+        // Hide previous result
+        resultDiv.style.display = 'none';
+        
+        try {
+            const formData = new FormData();
+            formData.append('delete_code', code);
+            formData.append('csrf_token', csrfToken);
+            
+            const res = await fetch('./admin.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            });
+            
+            if (!res.ok) throw new Error('Request failed');
+            
+            const data = await res.json();
+            
+            resultDiv.style.display = 'block';
+            
+            if (data.status === 'ok') {
+                resultDiv.style.background = 'rgba(76, 175, 80, 0.2)';
+                resultDiv.style.color = '#81c784';
+                resultDiv.style.border = '1px solid rgba(76, 175, 80, 0.3)';
+                resultDiv.textContent = 'File deleted successfully';
+                codeInput.value = '';
+            } else {
+                resultDiv.style.background = 'rgba(244, 67, 54, 0.2)';
+                resultDiv.style.color = '#e57373';
+                resultDiv.style.border = '1px solid rgba(244, 67, 54, 0.3)';
+                resultDiv.textContent = (data.message || 'Failed to delete file');
+            }
+        } catch (error) {
+            resultDiv.style.display = 'block';
+            resultDiv.style.background = 'rgba(244, 67, 54, 0.2)';
+            resultDiv.style.color = '#e57373';
+            resultDiv.style.border = '1px solid rgba(244, 67, 54, 0.3)';
+            resultDiv.textContent = 'Error: Failed to delete file';
+        } finally {
+            deleteBtn.disabled = false;
+            deleteBtn.style.opacity = '1';
+            deleteBtn.style.cursor = 'pointer';
+        }
+    });
+});
+</script>
+
         <div class="progress-section" style="margin-top:32px;">
             <div class="progress-title">Storage Usage</div>
             <div class="progress-bar">
@@ -417,4 +474,3 @@ foreach ($activity as $date => $count) {
     </div>
 </body>
 </html>
-<script src="/static/js/admin.js"></script>
