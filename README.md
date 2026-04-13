@@ -1,4 +1,4 @@
-# [hapka.lol](https://hapka.lol/) uploader (PHP)
+# [hapka.lol](https://hapka.lol/) uploader
 
 ![lerolero-4x](https://github.com/user-attachments/assets/85826a10-5678-451c-9c44-01469074769f)
 
