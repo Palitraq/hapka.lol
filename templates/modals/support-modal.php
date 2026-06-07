@@ -1,7 +1,7 @@
 <div id="support-modal" class="modal" style="display:none;">
   <div class="modal-content">
     <span class="modal-close" id="support-close">&times;</span>
-    <h2>&hearts; Support hapka.lol</h2>
+    <h2>&hearts; Support hapka.pw</h2>
     <div style="margin-bottom: 12px;">
       <b>Bitcoin:</b><br>
       <span style="word-break:break-all;">bc1qh6r4ptmh5txv43c50s4wfv8ts5z06453ss3tmc</span>

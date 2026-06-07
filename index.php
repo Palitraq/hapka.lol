@@ -194,17 +194,17 @@ if ($path !== '/' && !isset($_GET['link'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="hapka.lol — fast and anonymous file sharing. Upload and share files up to 100 MB, no registration. Free!">
-    <meta name="keywords" content="hapka.lol, file sharing, anonymous file upload, free file hosting, temporary file sharing, share files online, upload files up to 100MB, image hosting, video hosting, mp3 hosting, direct download link, short links, drag and drop upload, ShareX upload, ShareX config, fast uploads, no registration, privacy focused, secure file transfer, send large files, simple file uploader, cloud file sharing, one‑click upload, file transfer online, public download link, file viewer online, png upload, jpg upload, gif upload, webp upload, avif upload, mp4 upload, webm upload, mov upload, avi upload, mkv upload, mp3 upload, screenshot uploader, paste file online, 30 days storage, auto delete files, ephemeral uploads, minimal file host, lightweight file host, бесплатный файлообменник, анонимная загрузка файлов, обмен файлами онлайн, без регистрации, прямая ссылка на файл, временное хранение файлов">
+    <meta name="description" content="hapka.pw — fast and anonymous file sharing. Upload and share files up to 100 MB, no registration. Free!">
+    <meta name="keywords" content="hapka.pw, file sharing, anonymous file upload, free file hosting, temporary file sharing, share files online, upload files up to 100MB, image hosting, video hosting, mp3 hosting, direct download link, short links, drag and drop upload, ShareX upload, ShareX config, fast uploads, no registration, privacy focused, secure file transfer, send large files, simple file uploader, cloud file sharing, one‑click upload, file transfer online, public download link, file viewer online, png upload, jpg upload, gif upload, webp upload, avif upload, mp4 upload, webm upload, mov upload, avi upload, mkv upload, mp3 upload, screenshot uploader, paste file online, 30 days storage, auto delete files, ephemeral uploads, minimal file host, lightweight file host, бесплатный файлообменник, анонимная загрузка файлов, обмен файлами онлайн, без регистрации, прямая ссылка на файл, временное хранение файлов">
     <link rel="icon" type="image/png" href="/static/logo.png">
-    <title>hapka.lol</title>
+    <title>hapka.pw</title>
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
 <div class="header-wrap">
     <div class="header">
         <div class="header-left">
-            <span class="logo"><a href="https://hapka.lol" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;"><img src="/static/logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.lol</a></span>
+            <span class="logo"><a href="https://hapka.pw" target="_blank" rel="noopener" class="logo-gradient" style="text-decoration:none;"><img src="/static/logo.png" alt="logo" style="height:32px;vertical-align:middle;margin-right:10px;">hapka.pw</a></span>
         </div>
         <div class="header-right">
             <a href="/ShareX.php" class="header-link">ShareX</a>
