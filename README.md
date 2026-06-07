@@ -23,4 +23,4 @@ file hapka.pw - nginx conf
 3. in .env STORAGE_LIMIT_GB=123 to admin panel
 
 
-<img width="1406" height="664" alt="image" src="https://github.com/user-attachments/assets/332415fb-600b-46f9-8b0e-29bc0b6a8b1b" />
+<img width="1409" height="579" alt="image" src="https://github.com/user-attachments/assets/4a432cee-e6ad-4090-be87-ec1dc01fa534" />
