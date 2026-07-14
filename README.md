@@ -1,4 +1,4 @@
-# [hapka.pw](https://hapka.pw/) (lol) uploader
+# hapka.pw (lol) 🥀 07.06.25-13.07.26
 
 ![lerolero-4x](https://github.com/user-attachments/assets/85826a10-5678-451c-9c44-01469074769f)
 
@@ -10,7 +10,7 @@
 
 file hapka.pw - nginx conf
 
-## How to use
+### How to use
 
 1. Upload to any PHP hosting
 2. Create a writable `uploads/` folder in the project root
